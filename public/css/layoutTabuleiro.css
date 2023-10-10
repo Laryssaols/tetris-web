@@ -1,0 +1,65 @@
+@import url('https://fonts.cdnfonts.com/css/tetris');
+
+body{
+    background-color: #00072D;
+    background-image: url('../images/quadradinhos.png'); 
+    background-size: cover; 
+    margin: 0;
+}
+.centralizar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.classico{
+    width: 200px;
+    height: 400px;
+    background-color: rgba(255, 74, 28, 0.5);
+}
+
+.classico:hover{
+    background-color: #FF4A1C;
+}
+
+.maior{
+    width: 275px;
+    height: 550px;
+    background-color: rgba(255, 74, 28, 0.5);
+}
+
+.maior:hover{
+    background-color: #FF4A1C;
+}
+
+nav{
+    float: left;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+header{
+    width: 100%;
+    text-align: center;
+}
+
+h1{
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    text-shadow: 0 0 10px rgb(196, 192, 192);
+    text-align: center;
+    text-transform: uppercase; 
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 60px;
+    letter-spacing: 2px;
+}
+
+h2{
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    letter-spacing: 2px;
+}

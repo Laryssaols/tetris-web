@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualização Cadastro</title>
+    <link rel="stylesheet" href="../css/layoutAtualizacao.css">
+    <link rel="shortcut icon" href="../images/tetrisIcon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header>
+    <h1>Atualização <br>Cadastro</h1>
+  </header>
+
+    <div class="quadros">
+      <h2>Informações Pessoais</h2>
+        <div class="container">
+          
+            <label for="nome">NOME COMPLETO</label>
+            <input type="text" id="nome" placeholder="Digite seu nome completo">
+          
+            <label for="nasc">DATA DE NASCIMENTO</label>
+            <input type="date" id="nasc" disabled="">
+                  
+            <label for="cpf">CPF</label>
+            <input type="text" id="cpf" placeholder="CPF" disabled="">
+
+            <label for="tel">TELEFONE</label>
+            <input type="text" id="tel" placeholder="(XX)XXXXX-XXXX">
+                  
+            <div class="botao">
+              <button type="button" class="savebtn">Salvar Alterações</button>
+            </div>
+         
+        </div>
+    </div>
+    <div class="quadros"> 
+      <h2>Configurações de Login</h2>
+        <div class="container">
+        
+            <label for="username">USERNAME</label>
+            <input type="text" id="username" placeholder="Username" disabled = "">
+                    
+            <h3>Alterar Senha</h3>
+            <label for="pwd">SENHA ATUAL</label>
+            <input type="text" id="pwd" name="pwd" placeholder="Digite sua senha atual">
+                    
+            <label for="npwd">NOVA SENHA</label>
+            <input type="text" id="npwd" name="pwd" placeholder="Digite nova senha">
+                    
+            <label for="apwd">CONFIRMAR NOVA SENHA</label>
+            <input type="text" id="apwd" name="pwd"  placeholder="Confirme nova senha">
+                    
+            <div class="botao">
+              <button type="button" class="savebtn">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+    <div class="quadros">
+      <h2>Gerenciamento de E-mail</h2> 
+        <div class="container">
+
+            <label for="myemail">E-MAIL</label>
+            <input type="email" id="myemail" placeholder="Digite seu e-mail">
+            
+            <label for="mymail">CONFIRMAR E-MAIL</label>
+            <input type="email" id="mymail" placeholder="Confirme seu e-mail">
+
+            <div class="botao">
+              <button type="button" class="savebtn">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+  <div class="options">
+    <a href="jogo.html">
+      <img src="../images/voltar.png" alt="voltar">
+    </a>
+  </div>
+  
+  <footer>
+    <p>
+      Grupo 04 © 2023
+    </p>
+  </footer>
+
+</body>
+</html>

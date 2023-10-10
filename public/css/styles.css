@@ -1,0 +1,103 @@
+@import url('https://fonts.cdnfonts.com/css/tetris');
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #00072D;
+    background-image: url('../images/quadradinhos.png'); 
+}
+@keyframes shine {
+    0% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+}
+h1{
+    animation: shine 3s linear infinite;
+    font-family: 'Tetris';
+    color: aliceblue;
+    text-decoration:none
+}
+
+
+.login-container {
+    width: 550px;
+    height: 350px;
+    background-color: #FF4A1C;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Tetris';
+    box-shadow: 0 0 10px rgba(0, 0, 0, 2);
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 95%;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 10px;
+    background-color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.login-container button {
+    width: 98%;
+    padding: 10px;
+    margin-top: 5%;
+    background-color: #00072D;
+    color: white;
+    border: none;
+    font-family: 'Tetris';
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-container a {
+    margin-top: 10%;
+    padding-top: 20px;
+    display: block;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline;
+    font-family: 'Tetris';
+}
+
+
+footer{
+    position:fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    width: 100%;
+    height: fit-content;
+    padding: 5px 5px;
+    background-color: #FF4A1C;
+}
+
+footer p {
+    margin: 0;
+    font-size: 12px;
+    color: white;
+    font-family: 'Tetris', sans-serif;
+}
