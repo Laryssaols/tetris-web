@@ -6,16 +6,15 @@ const timeElement = document.getElementById("time");
 const lineElement = document.getElementById("line");
 const levelElement = document.getElementById("level");
 
+if (!localStorage.getItem('tamanhoTabuleiro')) {
+    localStorage.setItem('tamanhoTabuleiro', '1')
+}
 
 // Porque dessa parte aq?
 /* document.addEventListener("DOMContentLoaded", function() {
     const tamanhoTabuleiro = localStorage.getItem("tamanhoTabuleiro");
 
 }); */
-
-var animationId = undefined;
-var peca_teste = new Peca(4);
-var frame = 0;
 
 class Grid {
     constructor(size = 20, cols = 10, rows = 20) {
@@ -32,11 +31,12 @@ class Grid {
     // 2: Fixo
 
     pushPiece() {
-        Game.piece.forma.forEach()
+        Game.piece.forma.forEach(coord => {
+            
+        })
     }
 
     changeSize() {
-        console.log(this.rows)
         if (localStorage.getItem("tamanhoTabuleiro") == 2) {
             this.rows = 44
             this.cols = 22
@@ -69,23 +69,28 @@ class Grid {
 }
 
 class Game {
-    static running = false
+    static animationId = undefined;
     static frame = 0
     static frameWait = 20
     static grid = new Grid()
     static piece = null;
+    static image = null
+    static state = undefined;   // Rodando (running), Pausado (paused), 
+                                // finalizado (ended), antes de rodar (undefined)
 
     static start() {
+        Game.state = 'running';
+
         Game.generateRandomPiece()
-        if (!localStorage.getItem('tamanhoTabuleiro')) {
-            localStorage.setItem('tamanhoTabuleiro', '1')
-        }
+
+        return Game.animationId = requestAnimationFrame(Game.loop)
     }
 
     static loop() {
+        console.log(Game.animationId)
         if (Game.frame < Game.frameWait) {
             Game.frame++;
-            return animationId = requestAnimationFrame(Game.loop)
+            return Game.animationId = requestAnimationFrame(Game.loop)
         }
 
         Game.frame = 0;
@@ -96,7 +101,7 @@ class Game {
 
         Game.movePiece({x: 0, y: 1})
 
-        true ? animationId = requestAnimationFrame(Game.loop) : undefined;
+        true ? Game.animationId = requestAnimationFrame(Game.loop) : undefined;
     }
 
     static resetCanvas() {
@@ -104,11 +109,15 @@ class Game {
     }
 
     static generateRandomPiece() {
-        let num = Math.floor(Math.random() * 7) 
+        let num = Math.floor(Math.random() * 7)
+
         num = (num != 6 ? num : -1)
+
         Game.piece = new Peca(num)
-        let initial_x = Math.ceil(Game.grid.cols / 2)
-        Game.movePiece({x: initial_x, y: 0})
+
+        let ini_x = Math.ceil(Game.grid.cols/2)
+        
+        Game.movePiece({x: ini_x, y: 0})
     }
 
     static drawPiece() {
@@ -124,57 +133,79 @@ class Game {
     }
 
     static controlKeys(key) {
-        if (!Game.running) {
-            switch (key) {
-                case "Enter":
-                case " ":
-                    console.warn("Jogo inicializado!")
-                    Game.running = true;
-                    Game.piece.initPeca();
-                    Game.movePiece({x: Math.ceil(Game.grid.cols/2), y: 0})
-                    animationId = requestAnimationFrame(Game.loop)
-                    break;
-                case "s":
-                    Game.piece.initPeca();
-                    Game.grid.changeSize();
-                    Game.drawPiece();
-                    break;
-                default:
-                    console.log(key)
-                    console.log("Comando não Cadastrado!");
-                    break;
-            }
-        } else if (Game.running) {
-            switch(key) {
-                case 'ArrowUp':
-                    // Game.movePiece({x: +0, y: -1});
-                    Game.piece.rotacionarPeca()
-                    break;
-                case 'ArrowRight':
-                    Game.movePiece({x: +1, y: +0});
-                    break;
-                case 'ArrowDown':
-                    Game.movePiece({x: +0, y: +1});
-                    break;
-                case 'ArrowLeft':
-                    Game.movePiece({x: -1, y: +0})
-                    break;
-                case "Escape":
-                    console.warn("Jogo Encerrado!")
-                    Game.running = false;
-                    animationId == undefined ? undefined : cancelAnimationFrame(animationId);
-                    break;
-                default:
-                    console.log(key)
-                    console.log("Comando não Cadastrado!");
-                    break;
-            }
-            Game.checkCollision()
+        switch (Game.state) {
+            case 'running':
+                if (key === 'Escape')
+                    Game.pause();
+                else if (key === 'ArrowUp')
+                    Game.rotatePiece();
+                else if (key === 'ArrowLeft')
+                    Game.movePiece({x: -1, y: 0})
+                else if (key === 'ArrowRight')
+                    Game.movePiece({x: 1, y:0})
+                else if (key === 'ArrowDown')
+                    Game.movePiece({x: 0, y:1})
+                break;
+            case 'paused':
+                if (key === 'Escape' || key === 'Enter')
+                    Game.resume()
+                break;
+            case 'ended':
+                if (key === 'Enter')
+                    Game.start()
+                else if (key === 's')
+                    Game.changeSize()
+                break;
+            default:
+                if (key === 'Enter')
+                    Game.start()
+                else if (key === 's')
+                    Game.changeSize()
+                break;
         }
+        if (key === 'r') {
+            Game.reload()
+        }
+        console.warn(Game.state)
+    }
+
+    static pause() {
+        Game.state = 'paused';
+
+        cancelAnimationFrame(Game.animationId);
+
+        Game.imagem('pause')
+    }
+    static changeSize() {
+        Game.grid.changeSize();
+        Game.resetCanvas()
+        Game.imagem('start')
+    }
+
+    static reload(){
+        Game.state = undefined
+        
+        if (Game.animationId != undefined) {
+            cancelAnimationFrame(Game.animationId)
+            Game.animationId = undefined
+        }
+
+        Game.resetCanvas();
+        
+        Game.imagem('start')
+    }
+
+    static resume() {
+        Game.state = 'running'
+        Game.animationId = requestAnimationFrame(Game.loop)
     }
 
     static movePiece(coords) {
         Game.piece.move(coords);
+    }
+
+    static rotatePiece() {
+        Game.piece.rotacionarPeca();
     }
 
     static checkCollision() {
@@ -188,11 +219,18 @@ class Game {
             }
         })
     }
+
+    static imagem(type) {
+        let img = new Image()
+        img.src = (type == 'pause'? '../images/paused_game.png' : '../images/start.png')
+        let ini_y = (canvas.height - canvas.width) / 2
+        img.onload = () => ctx.drawImage(img, 0, ini_y, canvas.width, canvas.width)
+        console.log(ini_y)
+    }
 }
 
-Game.start()
+Game.reload()
 
 document.addEventListener("keydown", e => {
     Game.controlKeys(e.key)
-})
-
+});
