@@ -4,7 +4,6 @@ const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("score");
 const timeElement = document.getElementById("time");
 const lineElement = document.getElementById("line");
-const levelElement = document.getElementById("level");
 
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
@@ -29,15 +28,13 @@ class Grid {
     // 0: Vazio
     // 1: Movendo/ Atual
     // 2: Fixo
+    
+    //Todo collision function
 
-    pushPiece() {
-        Game.piece.forma.forEach(coord => {
-            
-        })
-    }
-
-    changeSize() {
-        if (localStorage.getItem("tamanhoTabuleiro") == 2) {
+    setSize() {
+        let type = localStorage.getItem("tamanhoTabuleiro")
+        alert(type)
+        if ( type == 2) {
             this.rows = 44
             this.cols = 22
             this.size = 10
@@ -50,11 +47,11 @@ class Grid {
         }
         canvas.width = this.cols * this.size;
         canvas.height = this.rows * this.size
-        this.reset()
     }
     
     reset() {
         this.grid = []
+        this.setSize()
         for (let i = 0; i < this.rows; i++) {
             let row = [];
             for(let j = 0; j < this.cols; j++) {
@@ -177,7 +174,7 @@ class Game {
         Game.imagem('pause')
     }
     static changeSize() {
-        Game.grid.changeSize();
+        Game.grid.setSize();
         Game.resetCanvas()
         Game.imagem('start')
     }
