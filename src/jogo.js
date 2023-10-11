@@ -265,7 +265,15 @@ class Game {
 
     static imagem(type) {
         let img = new Image()
-        img.src = (type == 'pause'? '../images/paused_game.png' : '../images/start.png')
+        switch (type) {
+            case 'pause':
+                img.src = '../images/paused_game.png'
+                break;
+            case 'start':
+                img.src = '../images/start.png'
+                break;
+            
+        }
         let ini_y = (canvas.height - canvas.width) / 2
         img.onload = () => ctx.drawImage(img, 0, ini_y, canvas.width, canvas.width)
     }
