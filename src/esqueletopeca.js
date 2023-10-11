@@ -212,7 +212,7 @@ class Peca {
                     {x:0,y:2},
                     {x:0,y:3},
                 ];
-                this.cor = "red";
+                this.cor = "rgb(255, 64, 0)";
                 break;
             case 1:
                 // OO
@@ -223,7 +223,7 @@ class Peca {
                     {x:1,y:0},
                     {x:1,y:1},
                 ];
-                this.cor = "green"
+                this.cor = "rgb(15, 255, 59)"
                 break;
             case 2: 
                 // O
@@ -247,7 +247,7 @@ class Peca {
                     {x:1,y:1},
                     {x:1,y:2},
                 ];
-                this.cor = "purple";
+                this.cor = "rgb(230, 35, 230)";
                 break;
             case 4: 
                 //  O
@@ -270,7 +270,7 @@ class Peca {
                     {x:2,y:0},
                     {x:2,y:1},
                 ];
-                this.cor = "pink";
+                this.cor = "cyan";
                 break;
             case -1:
                 // O 
@@ -278,7 +278,7 @@ class Peca {
                 this.forma = [
                     {x:0,y:0},
                 ];
-                this.cor = "cyan";
+                this.cor = "white";
                 break;
             default:
                 break;
@@ -311,6 +311,12 @@ class Peca {
         this.forma.forEach(el => {
             el.x += posicao.x;
             el.y += posicao.y;
+        })
+    }
+
+    inverteHorizontal(x_size) {
+        this.forma.forEach(el => {
+            el.x = ((x_size - 1) - el.x)
         })
     }
 }

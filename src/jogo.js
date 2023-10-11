@@ -9,11 +9,7 @@ if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
 }
 
-// Porque dessa parte aq?
-/* document.addEventListener("DOMContentLoaded", function() {
-    const tamanhoTabuleiro = localStorage.getItem("tamanhoTabuleiro");
-
-}); */
+let debug = true;
 
 class Grid {
     constructor(size = 20, cols = 10, rows = 20) {
@@ -21,19 +17,42 @@ class Grid {
         this.rows = rows
         this.size = size
         this.grid = []
+        this.setSize()
         this.reset()
     }
 
-    // Peças no grid
-    // 0: Vazio
-    // 1: Movendo/ Atual
-    // 2: Fixo
-    
-    //Todo collision function
+    putPiece(piece) {
+        piece.forma.forEach(el => {
+            this.grid[el.y][el.x] = '@';
+        })
+    }
+
+    checkCollisionY(piece) {
+        return piece.forma.some(el => {
+            if ((el.y + 1) >= this.grid.length) {
+                return true
+            } else if (this.grid[el.y + 1][el.x] != null)
+                return true;
+        });
+    }
+
+    checkCollisionX(piece, direction) {
+        return piece.forma.some(el => this.grid[el.y][el.x+direction] != null || el.x+direction < 0 || el.x+direction >= this.cols);
+    }
+
+    inverteHorizontal() {
+        this.grid = this.grid.map(row => {
+            for (let i = 0; i <= (row.length) / 2; i++) {
+                let aux = row[i]
+                row[i] = row[(row.length - 1)-i]
+                row[(row.length - 1)-i] = aux
+            }
+            return row
+        })
+    }
 
     setSize() {
         let type = localStorage.getItem("tamanhoTabuleiro")
-        alert(type)
         if ( type == 2) {
             this.rows = 44
             this.cols = 22
@@ -51,26 +70,23 @@ class Grid {
     
     reset() {
         this.grid = []
-        this.setSize()
         for (let i = 0; i < this.rows; i++) {
             let row = [];
             for(let j = 0; j < this.cols; j++) {
-                row.push(0);
+                row.push(null);
             }
             this.grid.push(row);
         }
-        console.warn("Grid Reset")
     }
-
-
 }
 
 class Game {
     static animationId = undefined;
     static frame = 0
-    static frameWait = 20
+    static frameWait = 5
     static grid = new Grid()
-    static piece = null;
+    static actualPiece = null;
+    static fixedPieces = []
     static image = null
     static state = undefined;   // Rodando (running), Pausado (paused), 
                                 // finalizado (ended), antes de rodar (undefined)
@@ -84,7 +100,6 @@ class Game {
     }
 
     static loop() {
-        console.log(Game.animationId)
         if (Game.frame < Game.frameWait) {
             Game.frame++;
             return Game.animationId = requestAnimationFrame(Game.loop)
@@ -94,11 +109,19 @@ class Game {
 
         Game.resetCanvas();
 
-        Game.drawPiece();
+        Game.drawBackgroundPieces()
+
+        Game.drawPiece(Game.actualPiece);
 
         Game.movePiece({x: 0, y: 1})
 
         true ? Game.animationId = requestAnimationFrame(Game.loop) : undefined;
+    }
+
+    static drawBackgroundPieces() {
+        Game.fixedPieces.forEach(piece => {
+            Game.drawPiece(piece)
+        })
     }
 
     static resetCanvas() {
@@ -109,23 +132,36 @@ class Game {
         let num = Math.floor(Math.random() * 7)
 
         num = (num != 6 ? num : -1)
-
-        Game.piece = new Peca(num)
-
+        
+        
+        Game.actualPiece = new Peca(num)
+        
         let ini_x = Math.ceil(Game.grid.cols/2)
         
         Game.movePiece({x: ini_x, y: 0})
+        
+        let isSpecial = (num == -1 ? true : false);
+        
+        isSpecial ? Game.inverteHorizontal() : undefined;
     }
 
-    static drawPiece() {
-        ctx.fillStyle = Game.piece.cor
-        Game.piece.forma.forEach(el => {
+    static drawPiece(piece) {
+        ctx.fillStyle = piece.cor
+        piece.forma.forEach(el => {
             let {x, y} = el;
             let size = Game.grid.size
             let ini_x = (x * size);
             let ini_y = (y * size);
     
-            ctx.fillRect(ini_x, ini_y, size-1, size-1);
+            ctx.fillRect(ini_x + 1, ini_y + 1, size - 2, size - 2);
+        })
+    }
+
+    static inverteHorizontal() {
+        Game.grid.inverteHorizontal();
+        Game.actualPiece.inverteHorizontal(Game.grid.cols);
+        Game.fixedPieces.forEach(el => {
+            el.inverteHorizontal(Game.grid.cols);
         })
     }
 
@@ -142,28 +178,33 @@ class Game {
                     Game.movePiece({x: 1, y:0})
                 else if (key === 'ArrowDown')
                     Game.movePiece({x: 0, y:1})
+                else if (key === 'i' && debug === true)
+                    Game.inverteHorizontal()
                 break;
             case 'paused':
                 if (key === 'Escape' || key === 'Enter')
                     Game.resume()
+                else if (key === 'i' && debug === true) {
+                    Game.inverteHorizontal()
+                    Game.imagem('pause')
+                }
                 break;
             case 'ended':
                 if (key === 'Enter')
                     Game.start()
-                else if (key === 's')
+                else if (key === 's' && debug === true)
                     Game.changeSize()
                 break;
             default:
                 if (key === 'Enter')
                     Game.start()
-                else if (key === 's')
+                else if (key === 's' && debug === true)
                     Game.changeSize()
                 break;
         }
         if (key === 'r') {
             Game.reload()
         }
-        console.warn(Game.state)
     }
 
     static pause() {
@@ -175,6 +216,7 @@ class Game {
     }
     static changeSize() {
         Game.grid.setSize();
+        Game.grid.reset()
         Game.resetCanvas()
         Game.imagem('start')
     }
@@ -188,6 +230,10 @@ class Game {
         }
 
         Game.resetCanvas();
+
+        Game.fixedPieces = [];
+
+        Game.grid.reset();
         
         Game.imagem('start')
     }
@@ -198,23 +244,23 @@ class Game {
     }
 
     static movePiece(coords) {
-        Game.piece.move(coords);
+        if (coords.y !=0 && Game.grid.checkCollisionY(Game.actualPiece)) {
+            Game.fixarPecaAtual()
+            Game.generateRandomPiece();
+        } else if (coords.y != 0 && !Game.grid.checkCollisionY(Game.actualPiece)) {
+            Game.actualPiece.move(coords);
+        } else if (coords.x != 0 && !Game.grid.checkCollisionX(Game.actualPiece, coords.x)) {
+            Game.actualPiece.move(coords);
+        } 
+    }
+
+    static fixarPecaAtual() {
+        Game.fixedPieces.push(Game.actualPiece);
+        Game.grid.putPiece(Game.actualPiece);
     }
 
     static rotatePiece() {
-        Game.piece.rotacionarPeca();
-    }
-
-    static checkCollision() {
-        let colidiu_x = false, colidiu_y = false;
-        Game.piece.forma.forEach(quadrado => {
-            let {x, y} = quadrado;
-            if (x <= 0 || x >= Game.grid.cols - 1) {
-                colidiu_x = true;
-            }else if (y < 0 || y >= Game.grid.rows -1) {
-                colidiu_y = true
-            }
-        })
+        Game.actualPiece.rotacionarPeca();
     }
 
     static imagem(type) {
@@ -222,7 +268,6 @@ class Game {
         img.src = (type == 'pause'? '../images/paused_game.png' : '../images/start.png')
         let ini_y = (canvas.height - canvas.width) / 2
         img.onload = () => ctx.drawImage(img, 0, ini_y, canvas.width, canvas.width)
-        console.log(ini_y)
     }
 }
 
