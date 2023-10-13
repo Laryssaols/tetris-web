@@ -1,3 +1,5 @@
+
+
 "use strict"
 const canvas = document.getElementById("tetris");
 const ctx = canvas.getContext("2d");
@@ -8,7 +10,7 @@ const lineElement = document.getElementById("line");
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
 }
-
+let pausedTime=0;
 let debug = true;
 
 function drawSquare(x, y, size, color) {
@@ -150,6 +152,9 @@ class Game {
     static numScore = 0;
 
     static start() {
+
+        startTimer();
+
         Game.state = 'running';
 
         Game.generateRandomPiece();
@@ -291,6 +296,7 @@ class Game {
 
     static pause() {
 
+        pauseTimer();
         if (Game.state != 'running') { return };
         
         Game.state = 'paused';
@@ -299,7 +305,6 @@ class Game {
         
         Game.imagem('pause');
     }
-
 
     static changeSize() {
         Game.grid.setSize();
@@ -329,7 +334,9 @@ class Game {
         Game.imagem('start');
     }
 
+
     static resume() {
+        resumeTimer();
         Game.state = 'running';
         Game.animationId = requestAnimationFrame(Game.loop);
     }
