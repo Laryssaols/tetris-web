@@ -28,7 +28,6 @@ main{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-top: 20px;
 }
 
 #tabela{
@@ -123,7 +122,6 @@ h2{
     font-family: 'Press Start 2P', cursive;
     color: #FFEBC6;
     font-size: medium;
-    margin: 0;
 }
 
 .linha{
@@ -136,7 +134,7 @@ h2{
 span{
     font-family: 'Press Start 2P', cursive;
     color: #FFEBC6;
-    font-size: medium;
+    font-size: medium
 }
 #game {
     height: 400px;
