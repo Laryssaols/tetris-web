@@ -1,3 +1,7 @@
+let startTime = 0; 
+let timerInterval;
+
+//função de inicializar
 let startTime = 0; // Variável para armazenar o tempo de início da partida
 let pausedTime = 0; // Variável para armazenar o tempo de pausa
 let timerInterval; // Intervalo para atualizar o tempo

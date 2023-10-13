@@ -1,5 +1,3 @@
-
-
 "use strict"
 const canvas = document.getElementById("tetris");
 const ctx = canvas.getContext("2d");
@@ -10,8 +8,8 @@ const levelElement = document.getElementById("level")
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
 }
-let pausedTime=0;
-let debug = true;
+
+var DEBUG = true;
 
 function drawSquare(x, y, size, color) {
     ctx.fillStyle = color;
@@ -152,65 +150,7 @@ class Game {
     static numPecasGeradas = 0;
     static numScore = 0;
     static state = undefined;   // Rodando (running), Pausado (paused), 
-                                // finalizado (ended), antes de rodar (undefined)
-    static numScore = 0;
-
-    static start() {
-        Game.state = 'running';
-
-        Game.generateRandomPiece();
-
-        return Game.animationId = requestAnimationFrame(Game.loop);
-    }
-
-    //Verifica se tem uma peca especial na linha
-    static temPecaEspecial(row) {
-        for (const color of row) {
-            if (color !== 'white') {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static loop() {
-        if (Game.frame < Game.frameWait) {
-            Game.frame++;
-            return Game.animationId = requestAnimationFrame(Game.loop);
-        }
-        Game.frame = 0;
-
-        Game.VerificaPreenchimentoLinhaEAtualizaDados();
-
-        Game.resetCanvas();
-
-        Game.drawBackgroundPieces();
-
-        Game.drawPiece(Game.actualPiece);
-
-        Game.movePiece({x: 0, y: 1});
-
-        true ? Game.animationId = requestAnimationFrame(Game.loop) : undefined;
-    }
-
-    static drawBackgroundPieces() {
-        Game.grid.drawGrid();
-    }
-
-    
-
-    static VerificaPreenchimentoLinhaEAtualizaDados() {
-        let linhasDeletadas = Game.grid.verificaLinhasCompletas();
-        
-        if (linhasDeletadas < 1) { return; }
-        
-        
-        Game.linhas += linhasDeletadas;
-
-        Game.numScore += linhasDeletadas * 10; //bonus
-
-        Game.atualizaDados()
-    }
+    // finalizado (ended), antes de rodar (undefined)
 
     static atualizaDados() {
         scoreElement.innerText = Game.numScore;
@@ -392,7 +332,6 @@ class Game {
 
     static pause() {
 
-        pauseTimer();
         if (Game.state != 'running') { return };
         
         Game.state = 'paused';
@@ -400,14 +339,6 @@ class Game {
         cancelAnimationFrame(Game.animationId);
         
         Game.imagem('pause');
-    }
-
-
-    static changeSize() {
-        Game.grid.setSize();
-        Game.grid.reset();
-        Game.resetCanvas();
-        Game.imagem('start');
     }
 
     static reload(){
@@ -433,8 +364,11 @@ class Game {
         Game.imagem('start');
     }
 
+    static resetCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
     static resume() {
-        resumeTimer();
         Game.state = 'running';
         Game.animationId = requestAnimationFrame(Game.loop);
     }
