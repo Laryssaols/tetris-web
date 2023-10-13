@@ -314,7 +314,9 @@ class Game {
     }
 
     static pause() {
-        if (Game.state != 'runnning') { return };
+
+        if (Game.state != 'running') { return };
+        
         Game.state = 'paused';
 
         cancelAnimationFrame(Game.animationId);
