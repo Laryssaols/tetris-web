@@ -2,7 +2,7 @@
 const canvas = document.getElementById("tetris");
 const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("score");
-const timeElement = document.getElementById("time");
+//const timeElement = document.getElementById("time");
 const lineElement = document.getElementById("line");
 
 if (!localStorage.getItem('tamanhoTabuleiro')) {
@@ -29,7 +29,6 @@ class Grid {
         });
     }
     
-
     checkCollisionY(piece) {
         return piece.forma.some(el => {
             if ((el.y + 1) >= this.grid.length ) {
@@ -93,7 +92,7 @@ class Grid {
 class Game {
     static animationId = undefined;
     static frame = 0;
-    static frameWait = 8;
+    static frameWait = 10;
     static grid = new Grid();
     static actualPiece = null;
     static fixedPieces = [];
@@ -121,7 +120,7 @@ class Game {
     
     
         //Verifica se alguma linha foi completada com a mesma cor (sabendo que a peca especial pode estar inclusa)
-        static linhaCompletaExclusao() {
+       static linhaCompletaExclusao() {
             const linhasCompleta = [];
             for (let i = 0; i < this.rows; i++) {
                 const row = this.grid[i];
@@ -352,8 +351,6 @@ class Game {
     
             Game.fixedPieces.push(Game.actualPiece);
             Game.grid.putPiece(Game.actualPiece);
-            Game.cleanFullRows();
-            Game.generateRandomPiece();
 
         }
     }
