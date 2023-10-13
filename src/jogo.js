@@ -310,6 +310,7 @@ class Game {
         }
         if (key === 'r') {
             Game.reload()
+            Game.image('atualiza')
         }
     }
 
@@ -318,6 +319,8 @@ class Game {
         cancelAnimationFrame(Game.animationId);
         Game.imagem('pause');
     }
+
+
     static changeSize() {
         Game.grid.setSize();
         Game.grid.reset();

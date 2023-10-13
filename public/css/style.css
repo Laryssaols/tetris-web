@@ -20,11 +20,11 @@ main{
 }
 
 .coluna{
-    width: 230px;
+    width: 280px;
+    height: 430px;
     background-color: #FF4A1C;  
     border-radius: 50px;
     border: 2px solid #FFEBC6; 
-    height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -142,7 +142,7 @@ p{
 }
 
 .right-data {
-    width: 230px;
+    width: 280px;
     height: 430px;
     display: flex;
     flex-direction: column;
@@ -162,11 +162,6 @@ p{
 
 #rankin-texto{
     margin-top: 20px;
-}
-
-#next-piece{
-    height: 150px;
-    width: 150px;
 }
 
 footer{
@@ -190,8 +185,8 @@ footer p {
 .options{
     width: inherit;
     display: flex;
-    justify-content: space-around;
-    margin-top: 40px;
+    justify-content: space-evenly;
+    margin-top: 60px;
 }
   
 .options a {
@@ -199,8 +194,8 @@ footer p {
 }
   
 .options img {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     transition: filter 0.3s;
 }
   
