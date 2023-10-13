@@ -3,7 +3,8 @@ const canvas = document.getElementById("tetris");
 const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("score");
 const lineElement = document.getElementById("line");
-const levelElement = document.getElementById("level")
+const levelElement = document.getElementById("level");
+const timerElement = document.getElementById("timer");
 
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
@@ -149,8 +150,10 @@ class Game {
     static nivel = 0;
     static numPecasGeradas = 0;
     static numScore = 0;
-    static state = undefined;   // Rodando (running), Pausado (paused), 
+    // Rodando (running), Pausado (paused), 
     // finalizado (ended), antes de rodar (undefined)
+    static state = undefined;   
+    static timer = { id: undefined, seg: 0, min: 0, }
 
     static atualizaDados() {
         scoreElement.innerText = Game.numScore;
@@ -324,6 +327,8 @@ class Game {
 
     static start() {
         Game.state = 'running';
+
+        Game.runTimer()
         
         Game.generateRandomPiece();
         
@@ -339,6 +344,8 @@ class Game {
         cancelAnimationFrame(Game.animationId);
         
         Game.imagem('pause');
+
+        clearInterval(Game.timer.id)
     }
 
     static reload(){
@@ -354,6 +361,8 @@ class Game {
         Game.linhas = 0;
 
         Game.nivel = 0;
+
+        Game.timer = {seg: 0, min: 0}
         
         Game.atualizaDados()
         
@@ -370,6 +379,9 @@ class Game {
 
     static resume() {
         Game.state = 'running';
+
+        Game.runTimer()
+
         Game.animationId = requestAnimationFrame(Game.loop);
     }
     
@@ -397,6 +409,22 @@ class Game {
             }
         }
         return false;
+    }
+
+    static runTimer() {
+        Game.timer.id = setInterval(() => {
+            let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
+            let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
+            
+            timerElement.innerText = `${minutos}:${segundos}`
+            
+            if (Game.timer.seg % 60 == 0 && Game.timer.seg > 0) {
+                Game.timer.min++;
+                Game.timer.seg = 0;
+            }
+            
+            Game.timer.seg++
+        }, 1000); 
     }
 
     static verificaPreenchimentoLinhaEAtualizaDados() {
