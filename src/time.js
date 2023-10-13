@@ -1,33 +1,27 @@
-let timerInterval;
-    let startTime;
-    let isGameRunning = false;
+let startTime = 0; // Variável para armazenar o tempo de início da partida
+let timerInterval; // Intervalo para atualizar o tempo
 
-    function startGame() {
-      if (!isGameRunning) {
-        startTime = Date.now();
-        isGameRunning = true;
-        timerInterval = setInterval(updateTimer, 1000);
-        document.getElementById("endButton").removeAttribute("disabled");
-        document.getElementById("startButton").setAttribute("disabled", "true");
-      }
-    }
+//função de inicializar
+function startTimer() {
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000); // Atualize a cada segundo
+}
 
-    function endGame() {
-      if (isGameRunning) {
-        clearInterval(timerInterval);
-        isGameRunning = false;
-        document.getElementById("endButton").setAttribute("disabled", "true");
-        document.getElementById("startButton").removeAttribute("disabled");
-      }
-    }
+//função para atualizar tempo de partida 
+function updateTimer() {
+  const currentTime = Date.now();
+  const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+  const minutes = Math.floor(elapsedTime / 60);
+  const seconds = elapsedTime % 60;
+  const timerElement = document.getElementById("timer");
+  timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
 
-    function updateTimer() {
-      const currentTime = Date.now();
-      const elapsedTime = Math.floor((currentTime - startTime) / 1000);
-      const minutes = Math.floor(elapsedTime / 60);
-      const seconds = elapsedTime % 60;
-      document.getElementById("timer").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    }
+//func para quando reiniciar a partida 
+Game.start = function () {
+  Game.state = "running";
+  startTimer(); // Inicie o temporizador
+  // Resto do seu código de início do jogo
+  // ...
+};
 
-    document.getElementById("startButton").addEventListener("click", startGame);
-    document.getElementById("endButton").addEventListener("click", endGame);
