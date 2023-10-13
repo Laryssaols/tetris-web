@@ -18,36 +18,25 @@
     <section class= "coluna">
 
         <div class ="linha">
-            <h2>
-                TIME
-            <span id="timer" class="time">0:00</span></p>
-            </h2>
+            <h2> TIME</h2>
+            <span id="timer" class="time">0:00</span>
         </div>
     
         <div class ="linha">
-            <h2>
-                SCORE
-                <span id="score"></span>
-            </h2>
+            <h2>SCORE</h2>
+            <span id="score"></span>
         </div>
 
         <div class = "linha">
-            <h2>
-                LEVEL
-                <span class="Level"></span></h2>
-            
+            <h2>LEVEL</h2>
+            <span id="level"></span>
         </div>
-    
+        
         <div class = "linha">
-            <h2>LINES
-                <span id="line"></span>
-            </h2>
+            <h2>LINES</h2>
+            <span id="line"></span>
         </div>
     </section>
-
-    <div class = "options2">
-
-    </div>
     
     <div id="game" class="full-screen with-bg">
         <canvas id="tetris" width="200" height="400"></canvas>
@@ -135,8 +124,8 @@
                 <a href="login.html"><img src="../images/Home.png" alt="Home"></a>
                 <a href="Ranking.html"> <img src="../images/Ranking.png" alt="Ranking" width="100px" height="100px"></a>
                 <a href="atualizacao.html"> <img src="../images/Login.png" alt="Atualização" width="100px" height="100px"></a>
-                <a id="conf" href=""><img src="../images/pausa.png" alt="pausa"></a>
-                <a id="pausa" href=""><img src="../images/atualiza.png" alt=""></a>
+                <a id="pausa" onclick="Game.pause()"><img src="../images/pausa.png" alt="pausa"></a>
+                <a id="reinicia" onclick="Game.reload()"><img src="../images/atualiza.png" alt="reinicia"></a>
         </div>
     </div>
 </main>
@@ -146,11 +135,11 @@
     <p>Grupo 04 © 2023</p>
 </footer>
 
-
 <script src="../../src/esqueletopeca.js"></script>]
 <script src="../../src/funcoes.js"></script>
 <script src="../../src/jogo.js"></script>
 <script src="../../src/time.js"></script>
   
+
 </body>
 </html>
