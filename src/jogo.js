@@ -75,11 +75,13 @@ class Grid {
                 if (row.includes(-1)) {
                     Game.inverteHorizontal()
                 }
+                console.count();
                 return index;
             }
             return null;
         });
         linhasCompletas = linhasCompletas.filter(row => row != null)
+        console.warn(`Numero de linhas completadas e removidas: ${linhasCompletas.length}`);
         this.excluirLinhas(linhasCompletas)
         return linhasCompletas.length;
     }
@@ -217,7 +219,6 @@ class Game {
         
         if (linhasDeletadas < 1) { return; }
         
-        alert(linhasDeletadas);
         
         Game.linhas += linhasDeletadas;
 
@@ -292,7 +293,6 @@ class Game {
                     Game.resume()
                 else if (key === 'i' && debug === true) {
                     Game.inverteHorizontal()
-                    Game.imagem('pause')
                 }
                 break;
             case 'ended':
@@ -310,13 +310,15 @@ class Game {
         }
         if (key === 'r') {
             Game.reload()
-            Game.image('atualiza')
         }
     }
 
     static pause() {
+        if (Game.state != 'runnning') { return };
         Game.state = 'paused';
+
         cancelAnimationFrame(Game.animationId);
+        
         Game.imagem('pause');
     }
 
