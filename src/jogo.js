@@ -244,15 +244,15 @@ class Game {
     }
 
     static movePiece(coords) {
-        if (coords.y !=0 && Game.grid.checkCollisionY(Game.actualPiece)) {
-            Game.fixarPecaAtual()
-            Game.generateRandomPiece();
-        } else if (coords.y != 0 && !Game.grid.checkCollisionY(Game.actualPiece)) {
-            Game.actualPiece.move(coords);
-        } else if (coords.x != 0 && !Game.grid.checkCollisionX(Game.actualPiece, coords.x)) {
-            Game.actualPiece.move(coords);
-        } 
-    }
+        if (coords.y !== 0 && Game.grid.checkCollisionY(Game.actualPiece)) {
+          Game.fixarPecaAtual();
+          Game.generateRandomPiece();
+        } else if (coords.y !== 0 && !Game.grid.checkCollisionY(Game.actualPiece)) {
+          Game.actualPiece.move(coords);
+        } else if (coords.x !== 0 && !Game.grid.checkCollisionX(Game.actualPiece, coords.x)) {
+          Game.actualPiece.move(coords);
+        }
+      }
 
     static fixarPecaAtual() {
         Game.fixedPieces.push(Game.actualPiece);
