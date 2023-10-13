@@ -334,4 +334,9 @@ class Peca {
             }
         })
     }
+
+    static getCor(type) {
+        let peca = new Peca(type)
+        return peca.cor;
+    }
 }    

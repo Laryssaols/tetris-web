@@ -11,6 +11,11 @@ if (!localStorage.getItem('tamanhoTabuleiro')) {
 
 let debug = true;
 
+function drawSquare(x, y, size, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x + 1, y + 1, size - 2, size - 2)
+}
+
 class Grid {
     constructor(size, cols, rows) {
         this.size = size;
@@ -21,10 +26,24 @@ class Grid {
         this.reset();
     }
 
+    newRow() {
+        return new Array(this.cols).fill(null);
+    }
+
+    drawGrid() {
+        this.grid.forEach((row, y) => {
+            row.forEach((col, x) => {
+                if (col != null) {
+                    drawSquare(x * this.size, y * this.size, this.size, Peca.getCor(col))
+                }
+            })
+        })
+    }
+
     putPiece(piece) {
         piece.forma.forEach(el => {
             if (el.y >= 0 && el.y < this.grid.length && el.x >= 0 && el.x < this.grid[el.y].length) {
-                this.grid[el.y][el.x] = '@';
+                this.grid[el.y][el.x] = piece.tipo;
             }
         });
     }
@@ -49,9 +68,39 @@ class Grid {
         });
     }
 
+    //Verifica se alguma linha foi completada
+    verificaLinhasCompletas() {
+        let linhasCompletas = this.grid.map((row, index) => {
+            if (!row.includes(null)) {
+                if (row.includes(-1)) {
+                    Game.inverteHorizontal()
+                }
+                return index;
+            }
+            return null;
+        });
+        linhasCompletas = linhasCompletas.filter(row => row != null)
+        this.excluirLinhas(linhasCompletas)
+        return linhasCompletas.length;
+    }
+
+    //Exclui a linha 
+    excluirLinhas(linhasCompletas) {
+        if (linhasCompletas.length < 1) {
+            return false
+        }
+    
+        linhasCompletas.forEach(linha => {
+            this.grid.splice(linha, 1);
+            this.grid.unshift(this.newRow())
+        });
+
+        return true;
+    }  
+
     inverteHorizontal() {
         this.grid = this.grid.map(row => {
-            for (let i = 0; i <= (row.length) / 2; i++) {
+            for (let i = 0; i <= Math.ceil((row.length) / 2); i++) {
                 let aux = row[i]
                 row[i] = row[(row.length - 1)-i]
                 row[(row.length - 1)-i] = aux
@@ -80,10 +129,7 @@ class Grid {
     reset() {
         this.grid = []
         for (let i = 0; i < this.rows; i++) {
-            let row = [];
-            for(let j = 0; j < this.cols; j++) {
-                row.push(null);
-            }
+            let row = this.newRow()
             this.grid.push(row);
         }
     }
@@ -92,13 +138,15 @@ class Grid {
 class Game {
     static animationId = undefined;
     static frame = 0;
-    static frameWait = 10;
+    static frameWait = 15;
     static grid = new Grid();
     static actualPiece = null;
     static fixedPieces = [];
+    static linhas = 0;
     static image = null;
     static state = undefined;   // Rodando (running), Pausado (paused), 
                                 // finalizado (ended), antes de rodar (undefined)
+    static numScore = 0;
 
     static start() {
         Game.state = 'running';
@@ -117,51 +165,12 @@ class Game {
             }
             return false;
         }
-    
-    
-        //Verifica se alguma linha foi completada com a mesma cor (sabendo que a peca especial pode estar inclusa)
-       static linhaCompletaExclusao() {
-            const linhasCompleta = [];
-            for (let i = 0; i < this.rows; i++) {
-                const row = this.grid[i];
-                let corInicial = row[0]; // Alterado de const para let
-                while (corInicial === 'white') {
-                    corInicial = row[++i];
-                }
-                if (corInicial !== null && row.every(color => color === corInicial || color === 'white')) {
-                    linhaCompleta.push(i);
-                }
-            }
-            return linhaCompleta;
-        }
-    
-        //Exclui a linha 
-        static excluirLinhas(linhasParaExcluir) {
-            const linhas = this.linhaCompletaExclusao(); 
-            const linhasEliminadas = linhasCompletas.slice(0, 4);  // condição de só poder eliminar 4 linhas de uma vez
-            if (linhasEliminadas > 1) {
-                Game.numScore += linhasEliminadas.length * 10; //bonus 
-            } else {
-                Game.numScore += 10;
-            }
-    
-            const linhasParaManter = [];
-            for (let i = 0; i < this.rows; i++) {
-                if (!linhasParaExcluir.includes(i)) {
-                    linhasParaManter.push(this.grid[i]);
-                }
-            }
-            while (linhasParaManter.length < this.rows) {
-                linhasParaManter.unshift(new Array(this.cols).fill(null));
-            }
-            this.grid = linhasParaManter;
-        }    
 
-    //Verifica se a linha excluida tem uma peca especial, se sim, o tabuleiro deve ficar espelhado
+    /* //Verifica se a linha excluida tem uma peca especial, se sim, o tabuleiro deve ficar espelhado
     static tabuleiroEspelhado(linhasExcluidas) {
         let espelhado = false; 
         for (const linha of linhasExcluidas) {
-            const row = this.grid[linha];
+            const row = Game.grid[linha];
             if (row.every(cell => cell !== null)) {
                 if (this.temPecaEspecial(row)) {
                     espelhado = true; // Se houver uma peça especial, o tabuleiro deve ser espelhado
@@ -171,31 +180,56 @@ class Game {
         if (espelhado) {
             Game.grid.inverteHorizontal();
             Game.actualPiece.inverteHorizontal(Game.grid.cols);
-            for (const piece of this.fixedPieces) {
+            for (const piece of Game.fixedPieces) {
                 piece.inverteHorizontal(Game.grid.cols);
             }
         }
-    }
+    } */
 
     static loop() {
         if (Game.frame < Game.frameWait) {
             Game.frame++;
             return Game.animationId = requestAnimationFrame(Game.loop);
         }
-
         Game.frame = 0;
+
+        Game.VerificaPreenchimentoLinhaEAtualizaDados();
+
         Game.resetCanvas();
+
         Game.drawBackgroundPieces();
+
         Game.drawPiece(Game.actualPiece);
+
         Game.movePiece({x: 0, y: 1});
 
         true ? Game.animationId = requestAnimationFrame(Game.loop) : undefined;
     }
 
     static drawBackgroundPieces() {
-        Game.fixedPieces.forEach(piece => {
-            Game.drawPiece(piece);
-        })
+        Game.grid.drawGrid();
+    }
+
+    
+
+    static VerificaPreenchimentoLinhaEAtualizaDados() {
+        let linhasDeletadas = Game.grid.verificaLinhasCompletas();
+        
+        if (linhasDeletadas < 1) { return; }
+        
+        alert(linhasDeletadas);
+        
+        Game.linhas += linhasDeletadas;
+
+        Game.numScore += linhasDeletadas * 10; //bonus
+
+        Game.atualizaDados()
+    }
+
+    static atualizaDados() {
+        scoreElement.innerText = Game.numScore;
+
+        lineElement.innerText = Game.linhas;
     }
 
     static resetCanvas() {
@@ -212,21 +246,17 @@ class Game {
         let ini_x = Math.ceil(Game.grid.cols/2)
         
         Game.movePiece({x: ini_x, y: 0})
-        
-        let isSpecial = (num == -1 ? true : false);
-        
-        isSpecial ? Game.inverteHorizontal() : undefined;
     }
 
     static drawPiece(piece) {
-        ctx.fillStyle = piece.cor
+        
         piece.forma.forEach(el => {
             let {x, y} = el;
             let size = Game.grid.size
             let ini_x = (x * size);
             let ini_y = (y * size);
     
-            ctx.fillRect(ini_x + 1, ini_y + 1, size - 2, size - 2);
+            drawSquare(ini_x, ini_y, size, piece.cor);
         })
     }
 
@@ -251,8 +281,8 @@ class Game {
                     Game.movePiece({x: 1, y:0})
                 else if (key === 'ArrowDown') {
                     Game.movePiece({x: 0, y:1})
-                    Game.checkCollisionX(Game.actualPiece);
-                    Game.checkCollisionY(Game.actualPiece);
+                    // Game.checkCollisionX(Game.actualPiece);
+                    // Game.checkCollisionY(Game.actualPiece);
                 }
                 else if (key === 'i' && debug === true)
                     Game.inverteHorizontal()
@@ -298,14 +328,23 @@ class Game {
     static reload(){
         Game.state = undefined;
         
+        Game.numScore = 0;
+
+        Game.linhas = 0;
+
+        Game.atualizaDados()
+
         if (Game.animationId != undefined) {
             cancelAnimationFrame(Game.animationId);
             Game.animationId = undefined;
         }
 
         Game.resetCanvas();
+
         Game.fixedPieces = [];
+        
         Game.grid.reset();
+        
         Game.imagem('start');
     }
 
@@ -322,9 +361,9 @@ class Game {
             Game.actualPiece.move(coords);
         } else if (coords.x != 0 && !Game.grid.checkCollisionX(Game.actualPiece, coords.x)) {
             Game.actualPiece.move(coords);
-        } else if(nextY < 0) {
+        } /* else if(nextY < 0) {
             Game.gameOver();
-        }
+        } */
     }
 
     static fixarPecaAtual() {
@@ -338,15 +377,6 @@ class Game {
             if (occupiedCoordinates.some((coord) => coord.y === 0)) {
                 Game.gameOver();
                 return;
-            }
-    
-            for (const piece of Game.fixedPieces) {
-                for (const coord of occupiedCoordinates) {
-                    if (piece.forma.some((pCoord) => pCoord.x === coord.x && pCoord.y === coord.y)) {
-                        // a coordenada ocupada pela peça atual está ocupada por uma peça já fixada
-                        return;
-                    }
-                }
             }
     
             Game.fixedPieces.push(Game.actualPiece);
