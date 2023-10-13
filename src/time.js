@@ -1,11 +1,11 @@
 
-let startTime = 0; // Variável para armazenar o tempo de início da partida
-let timerInterval; // Intervalo para atualizar o tempo
+let startTime = 0; 
+let timerInterval;
 
 //função de inicializar
 function startTimer() {
   startTime = Date.now();
-  timerInterval = setInterval(updateTimer, 1000); // Atualize a cada segundo
+  timerInterval = setInterval(updateTimer, 1000); // Atualiza a cada segundo
 }
 
 //função para atualizar tempo de partida 
@@ -21,7 +21,7 @@ function updateTimer() {
 //func para quando reiniciar a partida 
 Game.start = function () {
   Game.state = "running";
-  startTimer(); // Inicie o temporizador
+  startTimer();
   Game.state = 'running';
 
   Game.generateRandomPiece()
