@@ -1,14 +1,12 @@
-let startTime = 0; // Variável para armazenar o tempo de início da partida
-let timerInterval; // Intervalo para atualizar o tempo
-
-//função de inicializar
+// Função para inicializar o temporizador
 function startTimer() {
-  startTime = Date.now();
-  timerInterval = setInterval(updateTimer, 1000); // Atualize a cada segundo
+  let startTime = Date.now();
+  startTime = Date.now() - pausedTime;
+  timerInterval = setInterval(() => updateTimer(startTime), 1000); // Atualiza a cada segundo
 }
 
-//função para atualizar tempo de partida 
-function updateTimer() {
+// Função para atualizar o tempo de partida
+function updateTimer(startTime) {
   const currentTime = Date.now();
   const elapsedTime = Math.floor((currentTime - startTime) / 1000);
   const minutes = Math.floor(elapsedTime / 60);
@@ -17,11 +15,16 @@ function updateTimer() {
   timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
-//func para quando reiniciar a partida 
-Game.start = function () {
-  Game.state = "running";
-  startTimer(); // Inicie o temporizador
-  // Resto do seu código de início do jogo
-  // ...
-};
+//pausar tempo
+
+function pauseTimer(){
+  clearInterval(timerInterval);
+  pausedTime = Date.now() - startTime;
+}
+
+function resumeTimer(){
+  startTime = Date.now()-pausedTime;
+  startTimer();
+}
+
 
