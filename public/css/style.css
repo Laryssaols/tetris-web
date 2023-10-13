@@ -116,15 +116,28 @@ h1{
     text-shadow: 0 0 10px rgb(0, 0, 0);
     margin-top: 30px;
     margin-left: 0;
+    
 }
 
 h2{
     font-family: 'Press Start 2P', cursive;
     color: #FFEBC6;
     font-size: medium;
-    text-align: center;
+    margin: 0;
 }
 
+.linha{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 20px 0;
+}
+span{
+    font-family: 'Press Start 2P', cursive;
+    color: #FFEBC6;
+    font-size: medium;
+}
 #game {
     height: 400px;
     width: 600px;
