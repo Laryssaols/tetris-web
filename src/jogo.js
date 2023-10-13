@@ -143,7 +143,6 @@ class Game {
     static frameWait = 15;
     static grid = new Grid();
     static actualPiece = null;
-    static fixedPieces = [];
     static linhas = 0;
     static image = null;
     static state = undefined;   // Rodando (running), Pausado (paused), 
@@ -158,35 +157,15 @@ class Game {
         return Game.animationId = requestAnimationFrame(Game.loop);
     }
 
-        //Verifica se tem uma peca especial na linha
-        static temPecaEspecial(row) {
-            for (const color of row) {
-                if (color !== 'white') {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-    /* //Verifica se a linha excluida tem uma peca especial, se sim, o tabuleiro deve ficar espelhado
-    static tabuleiroEspelhado(linhasExcluidas) {
-        let espelhado = false; 
-        for (const linha of linhasExcluidas) {
-            const row = Game.grid[linha];
-            if (row.every(cell => cell !== null)) {
-                if (this.temPecaEspecial(row)) {
-                    espelhado = true; // Se houver uma peça especial, o tabuleiro deve ser espelhado
-                }
+    //Verifica se tem uma peca especial na linha
+    static temPecaEspecial(row) {
+        for (const color of row) {
+            if (color !== 'white') {
+                return true;
             }
         }
-        if (espelhado) {
-            Game.grid.inverteHorizontal();
-            Game.actualPiece.inverteHorizontal(Game.grid.cols);
-            for (const piece of Game.fixedPieces) {
-                piece.inverteHorizontal(Game.grid.cols);
-            }
-        }
-    } */
+        return false;
+    }
 
     static loop() {
         if (Game.frame < Game.frameWait) {
@@ -264,9 +243,6 @@ class Game {
     static inverteHorizontal() {
         Game.grid.inverteHorizontal();
         Game.actualPiece.inverteHorizontal(Game.grid.cols);
-        Game.fixedPieces.forEach(el => {
-            el.inverteHorizontal(Game.grid.cols);
-        })
     }
 
     static controlKeys(key) {
@@ -333,6 +309,11 @@ class Game {
     }
 
     static reload(){
+        if (Game.animationId != undefined) {
+            cancelAnimationFrame(Game.animationId);
+            Game.animationId = undefined;
+        }
+
         Game.state = undefined;
         
         Game.numScore = 0;
@@ -341,14 +322,7 @@ class Game {
 
         Game.atualizaDados()
 
-        if (Game.animationId != undefined) {
-            cancelAnimationFrame(Game.animationId);
-            Game.animationId = undefined;
-        }
-
         Game.resetCanvas();
-
-        Game.fixedPieces = [];
         
         Game.grid.reset();
         
@@ -368,17 +342,14 @@ class Game {
             Game.actualPiece.move(coords);
         } else if (coords.x != 0 && !Game.grid.checkCollisionX(Game.actualPiece, coords.x)) {
             Game.actualPiece.move(coords);
-        } /* else if(nextY < 0) {
-            Game.gameOver();
-        } */
+        }
     }
 
     static fixarPecaAtual() {
         if (Game.state === 'running') {
-            const occupiedCoordinates = Game.actualPiece.forma.map((coord) => {
-                const x = coord.x;
-                const y = coord.y;
-                return { x, y };
+            let occupiedCoordinates = Game.actualPiece.forma.map((coord) => {
+                let {x, y} = coord;
+                return {x, y};
             });
     
             if (occupiedCoordinates.some((coord) => coord.y === 0)) {
@@ -386,10 +357,18 @@ class Game {
                 return;
             }
     
-            Game.fixedPieces.push(Game.actualPiece);
             Game.grid.putPiece(Game.actualPiece);
-
         }
+    }
+
+    static gameOver() {
+        if (Game.state != 'running') {return}
+        
+        Game.state = 'ended';
+
+        cancelAnimationFrame(Game.animationId);
+
+        Game.imagem()
     }
 
     static rotatePiece() {
