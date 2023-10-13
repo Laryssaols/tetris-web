@@ -1,3 +1,4 @@
+
 let startTime = 0; // Variável para armazenar o tempo de início da partida
 let timerInterval; // Intervalo para atualizar o tempo
 
@@ -21,7 +22,10 @@ function updateTimer() {
 Game.start = function () {
   Game.state = "running";
   startTimer(); // Inicie o temporizador
-  // Resto do seu código de início do jogo
-  // ...
+  Game.state = 'running';
+
+  Game.generateRandomPiece()
+
+  return Game.animationId = requestAnimationFrame(Game.loop)
 };
 
