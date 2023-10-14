@@ -77,7 +77,7 @@ class Grid {
 
     inverteHorizontal() {
         this.grid = this.grid.map(row => {
-            for (let i = 0; i <= Math.ceil((row.length) / 2); i++) {
+            for (let i = 0; i < Math.floor((row.length) / 2); i++) {
                 let aux = row[i]
                 row[i] = row[(row.length - 1)-i]
                 row[(row.length - 1)-i] = aux
@@ -146,6 +146,7 @@ class Game {
     static frameWait = 20;
     static grid = new Grid();
     static image = null;
+    static lastNumLinhas = 0;
     static linhas = 0;
     static nivel = 0;
     static numPecasGeradas = 0;
@@ -156,6 +157,10 @@ class Game {
     static timer = { id: undefined, seg: 0, min: 0, }
 
     static atualizaDados() {
+        let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
+        let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
+
+        timerElement.innerText = `${minutos}:${segundos}`
         scoreElement.innerText = Game.numScore;
         lineElement.innerText = Game.linhas;
         levelElement.innerText = Game.nivel;
@@ -176,37 +181,49 @@ class Game {
     static controlKeys(key) {
         switch (Game.state) {
             case 'running':
-                if (key === 'Escape')
+                if (key === 'Escape') {
                     Game.pause();
-                else if (key === 'ArrowUp')
+                }
+                else if (key === 'ArrowUp') {
                     Game.rotatePiece();
-                else if (key === 'ArrowLeft')
+                }
+                else if (key === 'ArrowLeft') {
                     Game.movePiece({x: -1, y: 0})
-                else if (key === 'ArrowRight')
+                }
+                else if (key === 'ArrowRight') {
                     Game.movePiece({x: 1, y:0})
-                else if (key === 'ArrowDown')
+                }
+                else if (key === 'ArrowDown') {
                     Game.movePiece({x: 0, y:1})
-                else if (key === 'i' && DEBUG)
+                }
+                else if (key === 'i' && DEBUG) {
                     Game.inverteHorizontal()
+                }
                 break;
             case 'paused':
-                if (key === 'Escape' || key === 'Enter')
+                if (key === 'Escape' || key === 'Enter') {
                     Game.resume()
+                }
                 else if (key === 'i' && DEBUG) {
-                Game.inverteHorizontal()
+                    Game.inverteHorizontal()
                 }
                 break;
             case 'ended':
-                if (key === 'Enter')
-                Game.start()
-                else if (key === 's' && DEBUG)
-                Game.changeSize()
+                if (key === 'Enter') {
+                    Game.reload()
+                    Game.start()
+                }
+                else if (key === 's' && DEBUG) {
+                    Game.changeSize()
+                }
                 break;
             default:
-                if (key === 'Enter')
+                if (key === 'Enter') {
                     Game.start()
-                else if (key === 's' && DEBUG)
+                }
+                else if (key === 's' && DEBUG) {
                     Game.changeSize()
+                }
                 break;
         }
         if (key === 'r') {
@@ -238,7 +255,6 @@ class Game {
             });
             
             if (occupiedCoordinates.some((coord) => coord.y === 0)) {
-                alert('Caiu no Game Over!')
                 Game.gameOver();
                 return;
             }
@@ -264,8 +280,6 @@ class Game {
         Game.actualPiece = new Peca(num)
 
         Game.numPecasGeradas++;
-
-        (Game.numPecasGeradas % 30 == 0) ? Game.aumentaNivel() : undefined;
         
         let ini_x = Math.ceil(Game.grid.cols/2)
         
@@ -353,6 +367,8 @@ class Game {
             cancelAnimationFrame(Game.animationId);
             Game.animationId = undefined;
         }
+
+        clearInterval(Game.timer.id);
         
         Game.state = undefined;
         
@@ -362,8 +378,8 @@ class Game {
 
         Game.nivel = 0;
 
-        Game.timer = {seg: 0, min: 0}
-        
+        Game.timer = {id: undefined, seg: 0, min: 0}
+
         Game.atualizaDados()
         
         Game.resetCanvas();
@@ -433,11 +449,16 @@ class Game {
         if (linhasDeletadas < 1) { return; }
         
         Game.linhas += linhasDeletadas;
+
         
         Game.numScore += linhasDeletadas * 10; //bonus
-
-        (Game.linhas > 0 && Game.linhas % 10 == 0) ? Game.aumentaNivel() : undefined;
         
+        if (Game.linhas > 0 && Game.linhas - Game.lastNumLinhas >= 10) { 
+            Game.aumentaNivel();
+            Game.lastNumLinhas += 10;
+        }
+        
+
         Game.atualizaDados()
     }
 }
