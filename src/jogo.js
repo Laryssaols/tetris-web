@@ -326,7 +326,7 @@ class Game {
         
         let ini_x = Math.ceil(Game.grid.cols/2)
         
-        Game.movePiece({x: ini_x, y: 0})
+        Game.movePiece({x: ini_x, y: 0}, true);
     }
 
     static imagem(type) {
@@ -371,14 +371,21 @@ class Game {
         Game.state != 'ended' ? Game.animationId = requestAnimationFrame(Game.loop) : undefined;
     }
 
-    static movePiece(coords) {
-        if (coords.y !=0 && Game.grid.checkCollisionY(Game.actualPiece)) {
-            Game.fixarPecaAtual();
-            Game.generateRandomPiece();
-        } else if (coords.y != 0 && !Game.grid.checkCollisionY(Game.actualPiece)) {
-            Game.actualPiece.move(coords);
-        } else if (coords.x != 0 && !Game.grid.checkCollisionX(Game.actualPiece, coords.x)) {
-            Game.actualPiece.move(coords);
+    static movePiece(coords, isNew) {
+        if (coords.y !=0) {
+            if (Game.grid.checkCollisionY(Game.actualPiece)) {
+                Game.fixarPecaAtual();
+                Game.generateRandomPiece();
+            } else {
+                Game.actualPiece.move(coords);
+            }
+        } else if (coords.x != 0) {
+            if (!Game.grid.checkCollisionX(Game.actualPiece, coords.x)) {
+                Game.actualPiece.move(coords);
+            } else if (isNew) {
+                Game.actualPiece.move(coords);
+                Game.grid.checkCollisionY(Game.actualPiece);
+            }
         }
     }
 

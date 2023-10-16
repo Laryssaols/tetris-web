@@ -63,3 +63,24 @@ h2{
     color: white;
     letter-spacing: 2px;
 }
+
+
+footer{
+    position:static;
+    bottom: 0;
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    width: 100%;
+    height: fit-content;
+    padding: 5px 5px;
+    background-color: #FF4A1C;
+}
+
+footer p {
+    margin: 0;
+    font-size: 12px;
+    color: white;
+    font-family: 'Tetris', sans-serif;
+}
+
