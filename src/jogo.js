@@ -1,16 +1,17 @@
+
+
 "use strict"
 const canvas = document.getElementById("tetris");
 const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("score");
 const lineElement = document.getElementById("line");
-const levelElement = document.getElementById("level");
-const timerElement = document.getElementById("timer");
+const levelElement = document.getElementById("level")
 
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
 }
-
-var DEBUG = true;
+let pausedTime=0;
+let debug = true;
 
 function drawSquare(x, y, size, color) {
     ctx.fillStyle = color;
@@ -77,7 +78,7 @@ class Grid {
 
     inverteHorizontal() {
         this.grid = this.grid.map(row => {
-            for (let i = 0; i < Math.floor((row.length) / 2); i++) {
+            for (let i = 0; i <= Math.ceil((row.length) / 2); i++) {
                 let aux = row[i]
                 row[i] = row[(row.length - 1)-i]
                 row[(row.length - 1)-i] = aux
@@ -146,21 +147,72 @@ class Game {
     static frameWait = 20;
     static grid = new Grid();
     static image = null;
-    static lastNumLinhas = 0;
     static linhas = 0;
     static nivel = 0;
     static numPecasGeradas = 0;
     static numScore = 0;
-    // Rodando (running), Pausado (paused), 
-    // finalizado (ended), antes de rodar (undefined)
-    static state = undefined;   
-    static timer = { id: undefined, seg: 0, min: 0, }
+    static state = undefined;   // Rodando (running), Pausado (paused), 
+                                // finalizado (ended), antes de rodar (undefined)
+    static numScore = 0;
+
+    static start() {
+        Game.state = 'running';
+
+        Game.generateRandomPiece();
+
+        return Game.animationId = requestAnimationFrame(Game.loop);
+    }
+
+    //Verifica se tem uma peca especial na linha
+    static temPecaEspecial(row) {
+        for (const color of row) {
+            if (color !== 'white') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static loop() {
+        if (Game.frame < Game.frameWait) {
+            Game.frame++;
+            return Game.animationId = requestAnimationFrame(Game.loop);
+        }
+        Game.frame = 0;
+
+        Game.VerificaPreenchimentoLinhaEAtualizaDados();
+
+        Game.resetCanvas();
+
+        Game.drawBackgroundPieces();
+
+        Game.drawPiece(Game.actualPiece);
+
+        Game.movePiece({x: 0, y: 1});
+
+        true ? Game.animationId = requestAnimationFrame(Game.loop) : undefined;
+    }
+
+    static drawBackgroundPieces() {
+        Game.grid.drawGrid();
+    }
+
+    
+
+    static VerificaPreenchimentoLinhaEAtualizaDados() {
+        let linhasDeletadas = Game.grid.verificaLinhasCompletas();
+        
+        if (linhasDeletadas < 1) { return; }
+        
+        
+        Game.linhas += linhasDeletadas;
+
+        Game.numScore += linhasDeletadas * 10; //bonus
+
+        Game.atualizaDados()
+    }
 
     static atualizaDados() {
-        let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
-        let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
-
-        timerElement.innerText = `${minutos}:${segundos}`
         scoreElement.innerText = Game.numScore;
         lineElement.innerText = Game.linhas;
         levelElement.innerText = Game.nivel;
@@ -181,49 +233,37 @@ class Game {
     static controlKeys(key) {
         switch (Game.state) {
             case 'running':
-                if (key === 'Escape') {
+                if (key === 'Escape')
                     Game.pause();
-                }
-                else if (key === 'ArrowUp') {
+                else if (key === 'ArrowUp')
                     Game.rotatePiece();
-                }
-                else if (key === 'ArrowLeft') {
+                else if (key === 'ArrowLeft')
                     Game.movePiece({x: -1, y: 0})
-                }
-                else if (key === 'ArrowRight') {
+                else if (key === 'ArrowRight')
                     Game.movePiece({x: 1, y:0})
-                }
-                else if (key === 'ArrowDown') {
+                else if (key === 'ArrowDown')
                     Game.movePiece({x: 0, y:1})
-                }
-                else if (key === 'i' && DEBUG) {
+                else if (key === 'i' && DEBUG)
                     Game.inverteHorizontal()
-                }
                 break;
             case 'paused':
-                if (key === 'Escape' || key === 'Enter') {
+                if (key === 'Escape' || key === 'Enter')
                     Game.resume()
-                }
                 else if (key === 'i' && DEBUG) {
-                    Game.inverteHorizontal()
+                Game.inverteHorizontal()
                 }
                 break;
             case 'ended':
-                if (key === 'Enter') {
-                    Game.reload()
-                    Game.start()
-                }
-                else if (key === 's' && DEBUG) {
-                    Game.changeSize()
-                }
+                if (key === 'Enter')
+                Game.start()
+                else if (key === 's' && DEBUG)
+                Game.changeSize()
                 break;
             default:
-                if (key === 'Enter') {
+                if (key === 'Enter')
                     Game.start()
-                }
-                else if (key === 's' && DEBUG) {
+                else if (key === 's' && DEBUG)
                     Game.changeSize()
-                }
                 break;
         }
         if (key === 'r') {
@@ -255,6 +295,7 @@ class Game {
             });
             
             if (occupiedCoordinates.some((coord) => coord.y === 0)) {
+                alert('Caiu no Game Over!')
                 Game.gameOver();
                 return;
             }
@@ -280,6 +321,8 @@ class Game {
         Game.actualPiece = new Peca(num)
 
         Game.numPecasGeradas++;
+
+        (Game.numPecasGeradas % 30 == 0) ? Game.aumentaNivel() : undefined;
         
         let ini_x = Math.ceil(Game.grid.cols/2)
         
@@ -341,8 +384,6 @@ class Game {
 
     static start() {
         Game.state = 'running';
-
-        Game.runTimer()
         
         Game.generateRandomPiece();
         
@@ -351,6 +392,7 @@ class Game {
 
     static pause() {
 
+        pauseTimer();
         if (Game.state != 'running') { return };
         
         Game.state = 'paused';
@@ -358,8 +400,14 @@ class Game {
         cancelAnimationFrame(Game.animationId);
         
         Game.imagem('pause');
+    }
 
-        clearInterval(Game.timer.id)
+
+    static changeSize() {
+        Game.grid.setSize();
+        Game.grid.reset();
+        Game.resetCanvas();
+        Game.imagem('start');
     }
 
     static reload(){
@@ -367,8 +415,6 @@ class Game {
             cancelAnimationFrame(Game.animationId);
             Game.animationId = undefined;
         }
-
-        clearInterval(Game.timer.id);
         
         Game.state = undefined;
         
@@ -377,9 +423,7 @@ class Game {
         Game.linhas = 0;
 
         Game.nivel = 0;
-
-        Game.timer = {id: undefined, seg: 0, min: 0}
-
+        
         Game.atualizaDados()
         
         Game.resetCanvas();
@@ -389,15 +433,9 @@ class Game {
         Game.imagem('start');
     }
 
-    static resetCanvas() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-    }
-
     static resume() {
+        resumeTimer();
         Game.state = 'running';
-
-        Game.runTimer()
-
         Game.animationId = requestAnimationFrame(Game.loop);
     }
     
@@ -427,38 +465,17 @@ class Game {
         return false;
     }
 
-    static runTimer() {
-        Game.timer.id = setInterval(() => {
-            let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
-            let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
-            
-            timerElement.innerText = `${minutos}:${segundos}`
-            
-            if (Game.timer.seg % 60 == 0 && Game.timer.seg > 0) {
-                Game.timer.min++;
-                Game.timer.seg = 0;
-            }
-            
-            Game.timer.seg++
-        }, 1000); 
-    }
-
     static verificaPreenchimentoLinhaEAtualizaDados() {
         let linhasDeletadas = Game.grid.verificaLinhasCompletas();
         
         if (linhasDeletadas < 1) { return; }
         
         Game.linhas += linhasDeletadas;
-
         
         Game.numScore += linhasDeletadas * 10; //bonus
-        
-        if (Game.linhas > 0 && Game.linhas - Game.lastNumLinhas >= 10) { 
-            Game.aumentaNivel();
-            Game.lastNumLinhas += 10;
-        }
-        
 
+        (Game.linhas > 0 && Game.linhas % 10 == 0) ? Game.aumentaNivel() : undefined;
+        
         Game.atualizaDados()
     }
 }
