@@ -110,6 +110,10 @@ footer p {
     text-align: center;
     font-family: 'Tetris';
     box-shadow: 0 0 10px rgba(0, 0, 0, 2);
+    margin: 9% auto 0; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center;
 }
 
 .login-container input[type="text"],
@@ -151,6 +155,25 @@ footer p {
     font-family: 'Tetris';
 }
 
+
+.footerLogin{
+    position:fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    width: 100%;
+    height: fit-content;
+    padding: 5px 5px;
+    background-color: #FF4A1C;
+}
+
+.footerLogin p {
+    margin: 0;
+    font-size: 12px;
+    color: white;
+    font-family: 'Tetris', sans-serif;
+}
 
 
 
@@ -360,7 +383,10 @@ img{
 /* -----------------ATUALIZAÇÃO----------------*/
 
 
-.tituloAtualizacao{
+/*Fontes do próprio tetris*/
+
+
+.h1Atu{
     font-family: 'Tetris', sans-serif;
     color: white;
     text-shadow: 0 0 10px rgb(196, 192, 192);
@@ -371,14 +397,14 @@ img{
     letter-spacing: 2px;
 }
 
-.h2Atualizacao{
+.h2Atu{
     font-family: 'Tetris', sans-serif;
     letter-spacing: 2px;
     margin-left: 20px;
     color: white;
 }
 
-.h3Atualizacao{
+.h3Atu{
     font-family: 'Tetris', sans-serif;
     color: white;
     margin-left: 20px;
@@ -386,7 +412,7 @@ img{
     letter-spacing: 2px;
 }
 
-.pAtualizacao{
+.pAtu{
     font-family: 'Tetris', sans-serif;
     letter-spacing: 1px;
     font-size: large;
@@ -425,42 +451,40 @@ input[type=text], input[type=date], input[type=email], select {
     font-size: 10px;
   }
 
-input[type=text]:focus, input[type=date]:focus, input[type=email]:focus {
+  input[type=text]:focus, input[type=date]:focus, input[type=email]:focus {
     background-color: #ddd;
     outline: none;
   }
 
-.buttonAtualização {
-    font-family: 'Tetris', sans-serif;
-    background-color: #00072D;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    opacity: 1;
-    margin-left: 70%;
-    height: auto;
-  }
-  
-.buttonAtualização:hover {
+
+
+.savebtn button:hover {
     background-color: #454e87;
     opacity:1;
-  }
-  
-.savebtn {
-    padding: 14px 20px;
-    background-color: #00072D;
-    float: left;
-    width: 30%;
-    border-radius: 5px;
-    font-size: 100%;
-  }
+}
 
-.buttonAtualização::after {
+.savebtn {
+    width: 98%;
+    padding: 10px;
+    margin-top: 5%;
+    background-color: #00072D;
+    color: white;
+    border: none;
+    font-family: 'Tetris';
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.savebtn button::after {
     content: "";
     clear: both;
     display: table;
-  }
+}
+
+
+
+
+
 
