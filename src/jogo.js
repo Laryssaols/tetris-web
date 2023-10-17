@@ -5,6 +5,7 @@ const scoreElement = document.getElementById("score");
 const lineElement = document.getElementById("line");
 const levelElement = document.getElementById("level");
 const timerElement = document.getElementById("timer");
+let estadoTabuleiro = 0;
 
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
@@ -57,19 +58,27 @@ class Grid {
         })
     }
 
-    //Exclui a linha
-    excluirLinhas(linhasCompletas) {
-        if (linhasCompletas.length < 1) {
-            return false
-        }
-    
-        linhasCompletas.forEach(linha => {
-            this.grid.splice(linha, 1);
-            this.grid.unshift(this.newRow())
-        });
+// Exclui a linha
+excluirLinhas(linhasCompletas) {
+    if (linhasCompletas.length < 1) {
+        return false;
+    }
 
-        return true;
-    }  
+    const maxDeletions = 4;
+    let deletions = 0;
+
+    for (const linha of linhasCompletas) {
+        if (deletions < maxDeletions) {
+            this.grid.splice(linha, 1);
+            this.grid.unshift(this.newRow());
+            deletions++;
+        } else {
+            break; 
+        }
+    }
+
+    return true;
+}
 
     newRow() {
         return new Array(this.cols).fill(null);
@@ -119,12 +128,23 @@ class Grid {
         canvas.height = this.rows * this.size;
     }
 
+
+//toda vez que o tabuleiro for invertido, ele precisa mudar as funções da tecla, para tambem se invertem 
+//para isso, é preciso de uma variavel que informe o estado do tabuleiro -> variavel global inicializada com 0
+
     //Verifica se alguma linha foi completada
     verificaLinhasCompletas() {
         let linhasCompletas = this.grid.map((row, index) => {
             if (!row.includes(null)) {
                 if (row.includes(-1)) {
-                    Game.inverteHorizontal()
+                    estadoTabuleiro ++;
+                    Game.inverteHorizontal();
+                    if (2%estadoTabuleiro == 0) {
+                        Game.state = 'inverte';
+                    } else {
+                        Game.state = 'running';
+                    }
+                    
                 }
                 console.count();
                 return index;
@@ -203,6 +223,28 @@ class Game {
                     Game.inverteHorizontal()
                 }
                 break;
+
+            case 'inverte':
+                if (key === 'Escape') {
+                    Game.pause();
+                }
+                else if (key === 'ArrowDown') {
+                    Game.rotatePiece();
+                }
+                else if (key === 'ArrowRight') {
+                    Game.movePiece({x: -1, y: 0})
+                }
+                else if (key === 'ArrowLeft') {
+                    Game.movePiece({x: 1, y:0})
+                }
+                else if (key === 'ArrowUp') {
+                    Game.movePiece({x: 0, y:1})
+                }
+                else if (key === 'i' && DEBUG) {
+                    Game.inverteHorizontal()
+                }
+                break;
+
             case 'paused':
                 if (key === 'Escape' || key === 'Enter') {
                     Game.resume()
@@ -251,7 +293,7 @@ class Game {
     }
 
     static fixarPecaAtual() {
-        if (Game.state === 'running') {
+        if (Game.state === 'running' || Game.state === 'inverte') {
             let occupiedCoordinates = Game.actualPiece.forma.map((coord) => {
                 let {x, y} = coord;
                 return {x, y};
@@ -261,7 +303,6 @@ class Game {
                 Game.gameOver();
                 return;
             }
-            
             Game.grid.putPiece(Game.actualPiece);
         }
     }
@@ -415,7 +456,7 @@ class Game {
     }
     
     static rotatePiece() {
-        if (Game.state === 'running') {
+        if (Game.state === 'running' || Game.state === 'inverte' ) {
             // Salva a posição atual da peça antes
             const oldForma = Game.actualPiece.forma;
             
@@ -456,21 +497,25 @@ class Game {
         }, 1000); 
     }
 
+
     static verificaPreenchimentoLinhaEAtualizaDados() {
         let linhasDeletadas = Game.grid.verificaLinhasCompletas();
         
         if (linhasDeletadas < 1) { return; }
         
         Game.linhas += linhasDeletadas;
+        if (linhasDeletadas == 1) {
+            Game.numScore += 10; 
+        }
 
-        
-        Game.numScore += linhasDeletadas * 10; //bonus
+        if (linhasDeletadas > 1) {
+            Game.numScore += linhasDeletadas * (10*linhasDeletadas); //bonus quando mais de uma linha é eliminada ao mesmo tempo
+        }
         
         if (Game.linhas > 0 && Game.linhas - Game.lastNumLinhas >= 10) { 
             Game.aumentaNivel();
             Game.lastNumLinhas += 10;
         }
-        
 
         Game.atualizaDados()
     }
@@ -481,3 +526,4 @@ Game.reload()
 document.addEventListener("keydown", e => {
     Game.controlKeys(e.key)
 });
+
