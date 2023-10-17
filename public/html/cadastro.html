@@ -16,16 +16,16 @@
 
         <div class="cadastro-container">
             <h1 class="tituloCadastro">Cadastre-se</h1>
-            <input type="number" placeholder="Digite seu CPF">
-            <input type="date">
-            <input type="text" placeholder="Escolha o Username">
-            <input type="text" placeholder="Digite seu nome completo">
-            <input type="text" placeholder="Digite seu e-mail">
-            <input type="text" placeholder="Confirme seu e-mail">
-            <input type="password" placeholder="Digite sua senha">
-            <input type="password" placeholder="Confirme sua senha">
-            <button>Cadastrar</button>
-            <button onclick="limparDados()">Limpar dados</button>
+            <input type="number" id="cpf" placeholder="Digite seu CPF">
+            <input type="date" id="dataNascimento">
+            <input type="text" id="userName" placeholder="Escolha o Username">
+            <input type="text" id="nomeCompleto" placeholder="Digite seu nome completo">
+            <input type="text" id="email" placeholder="Digite seu e-mail">
+            <input type="text" id="confirmarEmail" placeholder="Confirme seu e-mail">
+            <input type="password" id="senha" placeholder="Digite sua senha">
+            <input type="password" id="confirmarSenha" placeholder="Confirme sua senha">
+            <button onClick="validarCadastro()">Cadastrar</button>
+            <button onClick="limparDados()">Limpar dados</button>
             
         </div>
         
