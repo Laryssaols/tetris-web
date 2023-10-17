@@ -461,9 +461,10 @@ input[type=text]:focus, input[type=date]:focus, input[type=email]:focus {
 }
 
 .savebtn {
-    width: 98%;
+    width: 70%;
     padding: 10px;
-    margin-top: 5%;
+    margin-left: 15%;
+    margin-top: 4%;
     background-color: #00072D;
     color: white;
     border: none;
