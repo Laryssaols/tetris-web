@@ -9,7 +9,7 @@ function limparDados() {
     });
 }
 
-// Validação de cadastro (sera que agr commita?)
+// Validação de cadastro
 
 function validarCadastro() {
     const cpf = document.getElementById("cpf").value;
