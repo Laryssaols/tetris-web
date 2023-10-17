@@ -70,6 +70,7 @@ footer{
 footer p {
     margin: 0;
     font-size: 12px;
+    padding-right: 1%;
     color: white;
     font-family: 'Tetris', sans-serif;
 }
@@ -118,7 +119,7 @@ footer p {
 
 .login-container input[type="text"],
 .login-container input[type="password"] {
-    width: 95%;
+    /*width: 95%;*/
     padding: 10px;
     margin-top: 15px;
     margin-bottom: 10px;
@@ -129,7 +130,8 @@ footer p {
 }
 
 .login-container button {
-    width: 98%;
+    width: 90%;
+    margin-left: 5%;
     padding: 10px;
     margin-top: 5%;
     background-color: #00072D;
@@ -171,18 +173,10 @@ footer p {
 .footerLogin p {
     margin: 0;
     font-size: 12px;
+    padding-right: 1%;
     color: white;
     font-family: 'Tetris', sans-serif;
 }
-
-
-
-
-
-
-
-
-
 
 /* -------------RANKING----------------------- */
 
@@ -298,37 +292,38 @@ img{
     align-items: center;
  }
 
-
-
-
-
-
-
-
-
-
-
  /* --------------CADASTRO-------------*/
 
- .tituloCadastro{
+ @keyframes shine {
+    0% {
+      color: aliceblue;
+    }
+    50% {
+      color: #ff4a1c; /* Cor brilhante desejada */
+    }
+    100% {
+      color: aliceblue;
+    }
+  }
+  
+  .tituloCadastro {
     animation: shine 3s linear infinite;
     font-family: 'Tetris';
-    color: aliceblue;
-    text-decoration:none
-}
-
-
-.cadastro-container {
-    width: 550px;
-    height: auto;
-    background-color: rgba(255, 74, 28);
-    border-radius: 10px;
-    padding: 20px;
+    text-decoration: none;
     text-align: center;
-    font-family: 'Tetris';
-    box-shadow: 0 0 10px rgba(0, 0, 0, 2);
+  }
+
+  .cadastro-container {
+    width: 50%;
+    height: auto;
+    background-color: rgba(255, 74, 28, 1); 
+    border-radius: 10px;
+    padding: 5%;
+    /*text-align: center;*/
+    font-family: 'Tetris', sans-serif; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
     margin-top: 100px;
-    margin-left: 430px;
+    margin-left: 25%;
     margin-bottom: 100px;
 }
 
@@ -347,13 +342,14 @@ img{
 }
 
 .cadastro-container button {
-    width: 98%;
+    width: 85%;
+    margin-left: 3%;
     padding: 10px;
     margin-top: 5%;
     background-color: #00072D;
     color: white;
     border: none;
-    font-family: 'Tetris';
+    font-family: 'Tetris', sans-serif; 
     border-radius: 5px;
     font-size: 18px;
     font-weight: bold;
@@ -373,18 +369,17 @@ img{
     font-family: 'Press Start 2P', cursive;
 }
 
-
-
-
-
-
-
+.cadFooter p {
+    margin: 0;
+    font-size: 12px;
+    padding-right: 1%;
+    color: white;
+    font-family: 'Tetris', sans-serif;
+}
 
 /* -----------------ATUALIZAÇÃO----------------*/
 
-
 /*Fontes do próprio tetris*/
-
 
 .h1Atu{
     font-family: 'Tetris', sans-serif;
@@ -438,7 +433,8 @@ img{
     padding: 20px;
   }
 
-input[type=text], input[type=date], input[type=email], select {
+input[type=text], input[type=date], input[type=email], 
+input[type=password], input[type=number], select {
     font-family: 'Press Start 2P', cursive;
     width: 100%;
     padding: 12px;
@@ -451,7 +447,7 @@ input[type=text], input[type=date], input[type=email], select {
     font-size: 10px;
   }
 
-  input[type=text]:focus, input[type=date]:focus, input[type=email]:focus {
+input[type=text]:focus, input[type=date]:focus, input[type=email]:focus {
     background-color: #ddd;
     outline: none;
   }
