@@ -146,6 +146,7 @@ class Game {
     static frameWait = 20;
     static grid = new Grid();
     static image = null;
+    static inverted = false
     static lastNumLinhas = 0;
     static linhas = 0;
     static nivel = 0;
@@ -188,10 +189,12 @@ class Game {
                     Game.rotatePiece();
                 }
                 else if (key === 'ArrowLeft') {
-                    Game.movePiece({x: -1, y: 0})
+                    let xMv = Game.inverted ? 1 : -1;
+                    Game.movePiece({x: xMv, y: 0})
                 }
                 else if (key === 'ArrowRight') {
-                    Game.movePiece({x: 1, y:0})
+                    let xMv = Game.inverted ? -1 : 1;
+                    Game.movePiece({x: xMv, y:0})
                 }
                 else if (key === 'ArrowDown') {
                     Game.movePiece({x: 0, y:1})
@@ -304,6 +307,7 @@ class Game {
     }
 
     static inverteHorizontal() {
+        Game.inverted = Game.inverted ? false : true;
         Game.grid.inverteHorizontal();
         Game.actualPiece.inverteHorizontal(Game.grid.cols);
     }
@@ -384,6 +388,8 @@ class Game {
         Game.linhas = 0;
 
         Game.nivel = 0;
+
+        Game.inverted = false;
 
         Game.timer = {id: undefined, seg: 0, min: 0}
 
