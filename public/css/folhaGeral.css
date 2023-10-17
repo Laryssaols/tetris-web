@@ -314,12 +314,11 @@ img{
   }
 
   .cadastro-container {
-    width: 50%;
+    width: 40%;
     height: auto;
     background-color: rgba(255, 74, 28, 1); 
     border-radius: 10px;
     padding: 5%;
-    /*text-align: center;*/
     font-family: 'Tetris', sans-serif; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
     margin-top: 100px;
@@ -335,6 +334,7 @@ img{
     padding: 10px;
     margin-top: 15px;
     margin-bottom: 10px;
+    margin-left: 19px;
     border-radius: 5px;
     font-size: 12px;
     background-color: white;
@@ -354,6 +354,7 @@ img{
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
+    margin-left: 40px;
 }
 
 .cadastro-container a {
