@@ -58,18 +58,23 @@ class Grid {
     }
 
     //Exclui a linha
-    excluirLinhas(linhasCompletas) {
-        if (linhasCompletas.length < 1) {
-            return false
-        }
-    
-        linhasCompletas.forEach(linha => {
+excluirLinhas(linhasCompletas) {
+    if (linhasCompletas.length < 1) {
+        return false;
+    }
+    const numMaxDelecoes = 4;
+    let auxDelecoes = 0;
+    for (const linha of linhasCompletas) {
+        if (auxDelecoes < numMaxDelecoes) {
             this.grid.splice(linha, 1);
-            this.grid.unshift(this.newRow())
-        });
-
-        return true;
-    }  
+            this.grid.unshift(this.newRow());
+            auxDelecoes++;
+        } else {
+            break; 
+        }
+    }
+    return true;
+}  
 
     newRow() {
         return new Array(this.cols).fill(null);
@@ -450,26 +455,28 @@ class Game {
         }, 1000); 
     }
 
-    static verificaPreenchimentoLinhaEAtualizaDados() {
+      static verificaPreenchimentoLinhaEAtualizaDados() {
         let linhasDeletadas = Game.grid.verificaLinhasCompletas();
         
         if (linhasDeletadas < 1) { return; }
         
         Game.linhas += linhasDeletadas;
+        if (linhasDeletadas == 1) {
+            Game.numScore += 10; 
+        }
 
-        
-        Game.numScore += linhasDeletadas * 10; //bonus
+        if (linhasDeletadas > 1) {
+            Game.numScore += linhasDeletadas * (10*linhasDeletadas); //bonus quando mais de uma linha é eliminada ao mesmo tempo
+        }
         
         if (Game.linhas > 0 && Game.linhas - Game.lastNumLinhas >= 10) { 
             Game.aumentaNivel();
             Game.lastNumLinhas += 10;
         }
-        
 
         Game.atualizaDados()
     }
 }
-
 Game.reload()
 
 document.addEventListener("keydown", e => {
