@@ -482,19 +482,26 @@ class Game {
     }
 
     static runTimer() {
+        if (Game.timer.id) {
+            clearInterval(Game.timer.id); /
+        }
         Game.timer.id = setInterval(() => {
-            let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
-            let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
-            
-            timerElement.innerText = `${minutos}:${segundos}`
-            
-            if (Game.timer.seg % 60 == 0 && Game.timer.seg > 0) {
-                Game.timer.min++;
-                Game.timer.seg = 0;
+            if (Game.state == 'paused' || Game.state == 'ended') {
+                clearInterval(Game.timer.id); 
+            } else {
+                let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
+                let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
+    
+                timerElement.innerText = `${minutos}:${segundos}`;
+    
+                if (Game.timer.seg % 60 == 0 && Game.timer.seg > 0) {
+                    Game.timer.min++;
+                    Game.timer.seg = 0;
+                }
+    
+                Game.timer.seg++;
             }
-            
-            Game.timer.seg++
-        }, 1000); 
+        }, 1000);
     }
 
 
