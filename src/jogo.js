@@ -483,7 +483,7 @@ class Game {
 
     static runTimer() {
         if (Game.timer.id) {
-            clearInterval(Game.timer.id); /
+            clearInterval(Game.timer.id); 
         }
         Game.timer.id = setInterval(() => {
             if (Game.state == 'paused' || Game.state == 'ended') {
