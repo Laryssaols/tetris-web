@@ -187,10 +187,6 @@ class Game {
         levelElement.innerText = Game.nivel;
     }
 
-    static aumentaNivel() {
-        Game.nivel++;
-        Game.frameWait > 0 ? Game.frameWait-- : undefined;
-    }
 
     static changeSize() {
         Game.grid.setSize();
@@ -519,11 +515,14 @@ class Game {
             Game.numScore += linhasDeletadas * (10*linhasDeletadas); //bonus quando mais de uma linha é eliminada ao mesmo tempo
         }
         
-        if (Game.linhas > 0 && Game.linhas - Game.lastNumLinhas >= 10) { 
-            Game.aumentaNivel();
-            Game.lastNumLinhas += 10;
+        if (Game.linhas %3 === 0 ) { //nível aumenta a cada 3 linhas deletadas (condicao nn foi especificada no docs)
+            Game.nivel += 1;
         }
 
+        if (Game.numScore %300 == 0) {
+            Game.frameWait = Game.frameWait - 5;
+        }
+        
         Game.atualizaDados()
     }
 }
@@ -533,4 +532,5 @@ Game.reload()
 document.addEventListener("keydown", e => {
     Game.controlKeys(e.key)
 });
+
 
