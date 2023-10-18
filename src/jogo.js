@@ -5,7 +5,7 @@ const scoreElement = document.getElementById("score");
 const lineElement = document.getElementById("line");
 const levelElement = document.getElementById("level");
 const timerElement = document.getElementById("timer");
-let estadoTabuleiro = 0;
+let estadoTabuleiro = 1;
 
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
