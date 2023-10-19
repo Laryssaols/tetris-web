@@ -5,12 +5,13 @@ const scoreElement = document.getElementById("score");
 const lineElement = document.getElementById("line");
 const levelElement = document.getElementById("level");
 const timerElement = document.getElementById("timer");
+let estadoTabuleiro = 1;
 
 if (!localStorage.getItem('tamanhoTabuleiro')) {
     localStorage.setItem('tamanhoTabuleiro', '1')
 }
 
-var DEBUG = true;
+var DEBUG = false;
 
 function drawSquare(x, y, size, color) {
     ctx.fillStyle = color;
@@ -57,19 +58,27 @@ class Grid {
         })
     }
 
-    //Exclui a linha
-    excluirLinhas(linhasCompletas) {
-        if (linhasCompletas.length < 1) {
-            return false
-        }
-    
-        linhasCompletas.forEach(linha => {
-            this.grid.splice(linha, 1);
-            this.grid.unshift(this.newRow())
-        });
+// Exclui a linha
+excluirLinhas(linhasCompletas) {
+    if (linhasCompletas.length < 1) {
+        return false;
+    }
 
-        return true;
-    }  
+    const maxDeletions = 4;
+    let deletions = 0;
+
+    for (const linha of linhasCompletas) {
+        if (deletions < maxDeletions) {
+            this.grid.splice(linha, 1);
+            this.grid.unshift(this.newRow());
+            deletions++;
+        } else {
+            break; 
+        }
+    }
+
+    return true;
+}
 
     newRow() {
         return new Array(this.cols).fill(null);
@@ -119,12 +128,23 @@ class Grid {
         canvas.height = this.rows * this.size;
     }
 
+
+//toda vez que o tabuleiro for invertido, ele precisa mudar as funções da tecla, para tambem se invertem 
+//para isso, é preciso de uma variavel que informe o estado do tabuleiro -> variavel global inicializada com 0
+
     //Verifica se alguma linha foi completada
     verificaLinhasCompletas() {
         let linhasCompletas = this.grid.map((row, index) => {
             if (!row.includes(null)) {
                 if (row.includes(-1)) {
-                    Game.inverteHorizontal()
+                    estadoTabuleiro ++;
+                    Game.inverteHorizontal();
+                    if (2%estadoTabuleiro == 0) {
+                        Game.state = 'inverte';
+                    } else {
+                        Game.state = 'running';
+                    }
+                    
                 }
                 console.count();
                 return index;
@@ -146,6 +166,7 @@ class Game {
     static frameWait = 20;
     static grid = new Grid();
     static image = null;
+    static inverted = false
     static lastNumLinhas = 0;
     static linhas = 0;
     static nivel = 0;
@@ -166,10 +187,6 @@ class Game {
         levelElement.innerText = Game.nivel;
     }
 
-    static aumentaNivel() {
-        Game.nivel++;
-        Game.frameWait > 0 ? Game.frameWait-- : undefined;
-    }
 
     static changeSize() {
         Game.grid.setSize();
@@ -188,10 +205,12 @@ class Game {
                     Game.rotatePiece();
                 }
                 else if (key === 'ArrowLeft') {
-                    Game.movePiece({x: -1, y: 0})
+                    let xMv = Game.inverted ? 1 : -1;
+                    Game.movePiece({x: xMv, y: 0})
                 }
                 else if (key === 'ArrowRight') {
-                    Game.movePiece({x: 1, y:0})
+                    let xMv = Game.inverted ? -1 : 1;
+                    Game.movePiece({x: xMv, y:0})
                 }
                 else if (key === 'ArrowDown') {
                     Game.movePiece({x: 0, y:1})
@@ -200,6 +219,28 @@ class Game {
                     Game.inverteHorizontal()
                 }
                 break;
+
+            case 'inverte':
+                if (key === 'Escape') {
+                    Game.pause();
+                }
+                else if (key === 'ArrowDown') {
+                    Game.rotatePiece();
+                }
+                else if (key === 'ArrowRight') {
+                    Game.movePiece({x: -1, y: 0})
+                }
+                else if (key === 'ArrowLeft') {
+                    Game.movePiece({x: 1, y:0})
+                }
+                else if (key === 'ArrowUp') {
+                    Game.movePiece({x: 0, y:1})
+                }
+                else if (key === 'i' && DEBUG) {
+                    Game.inverteHorizontal()
+                }
+                break;
+
             case 'paused':
                 if (key === 'Escape' || key === 'Enter') {
                     Game.resume()
@@ -248,7 +289,7 @@ class Game {
     }
 
     static fixarPecaAtual() {
-        if (Game.state === 'running') {
+        if (Game.state === 'running' || Game.state === 'inverte') {
             let occupiedCoordinates = Game.actualPiece.forma.map((coord) => {
                 let {x, y} = coord;
                 return {x, y};
@@ -258,7 +299,6 @@ class Game {
                 Game.gameOver();
                 return;
             }
-            
             Game.grid.putPiece(Game.actualPiece);
         }
     }
@@ -304,6 +344,7 @@ class Game {
     }
 
     static inverteHorizontal() {
+        Game.inverted = Game.inverted ? false : true;
         Game.grid.inverteHorizontal();
         Game.actualPiece.inverteHorizontal(Game.grid.cols);
     }
@@ -385,6 +426,8 @@ class Game {
 
         Game.nivel = 0;
 
+        Game.inverted = false;
+
         Game.timer = {id: undefined, seg: 0, min: 0}
 
         Game.atualizaDados()
@@ -409,7 +452,7 @@ class Game {
     }
     
     static rotatePiece() {
-        if (Game.state === 'running') {
+        if (Game.state === 'running' || Game.state === 'inverte' ) {
             // Salva a posição atual da peça antes
             const oldForma = Game.actualPiece.forma;
             
@@ -435,20 +478,28 @@ class Game {
     }
 
     static runTimer() {
+        if (Game.timer.id) {
+            clearInterval(Game.timer.id); 
+        }
         Game.timer.id = setInterval(() => {
-            let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
-            let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
-            
-            timerElement.innerText = `${minutos}:${segundos}`
-            
-            if (Game.timer.seg % 60 == 0 && Game.timer.seg > 0) {
-                Game.timer.min++;
-                Game.timer.seg = 0;
+            if (Game.state == 'paused' || Game.state == 'ended') {
+                clearInterval(Game.timer.id); 
+            } else {
+                let segundos = Game.timer.seg < 10 ? `0${Game.timer.seg}` : Game.timer.seg;
+                let minutos = Game.timer.min < 10 ? `0${Game.timer.min}` : Game.timer.min;
+    
+                timerElement.innerText = `${minutos}:${segundos}`;
+    
+                if (Game.timer.seg % 60 == 0 && Game.timer.seg > 0) {
+                    Game.timer.min++;
+                    Game.timer.seg = 0;
+                }
+    
+                Game.timer.seg++;
             }
-            
-            Game.timer.seg++
-        }, 1000); 
+        }, 1000);
     }
+
 
     static verificaPreenchimentoLinhaEAtualizaDados() {
         let linhasDeletadas = Game.grid.verificaLinhasCompletas();
@@ -456,16 +507,22 @@ class Game {
         if (linhasDeletadas < 1) { return; }
         
         Game.linhas += linhasDeletadas;
+        if (linhasDeletadas == 1) {
+            Game.numScore += 10; 
+        }
 
-        
-        Game.numScore += linhasDeletadas * 10; //bonus
-        
-        if (Game.linhas > 0 && Game.linhas - Game.lastNumLinhas >= 10) { 
-            Game.aumentaNivel();
-            Game.lastNumLinhas += 10;
+        if (linhasDeletadas > 1) {
+            Game.numScore += linhasDeletadas * (10*linhasDeletadas); //bonus quando mais de uma linha é eliminada ao mesmo tempo
         }
         
+        if (Game.linhas %3 === 0 ) { //nível aumenta a cada 3 linhas deletadas (condicao nn foi especificada no docs)
+            Game.nivel += 1;
+        }
 
+        if (Game.numScore %300 == 0) {
+            Game.frameWait = Game.frameWait - 5;
+        }
+        
         Game.atualizaDados()
     }
 }
@@ -475,3 +532,5 @@ Game.reload()
 document.addEventListener("keydown", e => {
     Game.controlKeys(e.key)
 });
+
+

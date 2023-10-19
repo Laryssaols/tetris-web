@@ -23,24 +23,26 @@
             <div class="maior" id="opcaoMaior"></div>
         </nav>
     </div>
-</body>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const opcaoClassico = document.getElementById("opcaoClassico");
-        const opcaoMaior = document.getElementById("opcaoMaior");
-    
-        opcaoClassico.addEventListener("click", function() {
-            localStorage.setItem("tamanhoTabuleiro", "1");
-            window.location.href = "jogo.html"
-        });
-    
-        opcaoMaior.addEventListener("click", function() {
-            localStorage.setItem("tamanhoTabuleiro", "2");
-            window.location.href = "jogo.html"
-        });
+    <footer>
+        <p>Grupo 04 © 2023</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const opcaoClassico = document.getElementById("opcaoClassico");
+            const opcaoMaior = document.getElementById("opcaoMaior");
         
-    });
-</script>
-    
+            opcaoClassico.addEventListener("click", function() {
+                localStorage.setItem("tamanhoTabuleiro", "1");
+                window.location.href = "../html/jogo.html";
+            });
+        
+            opcaoMaior.addEventListener("click", function() {
+                localStorage.setItem("tamanhoTabuleiro", "2");
+                window.location.href = "../html/jogo.html";
+            });
+        });
+    </script>
+</body>
 </html>
