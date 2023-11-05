@@ -310,6 +310,8 @@ class Game {
         cancelAnimationFrame(Game.animationId);
         
         Game.imagem('ended')
+
+        salvarResultado();
     }
 
     static generateRandomPiece() {
@@ -526,6 +528,36 @@ class Game {
         Game.atualizaDados()
     }
 }
+
+
+function salvarResultado() {
+    //ajax
+    let resultadoJogo =  {
+        timer: timerElement.innerText,
+        lines: lineElement.innerText,
+        level: levelElement.innerText,
+        score: scoreElement.innerText
+    }
+    
+    let formData = new FormData();
+    formData.append("timer", resultadoJogo.timer);
+    formData.append("lines", resultadoJogo.lines);
+    formData.append("level", resultadoJogo.level);
+    formData.append("score", resultadoJogo.score);
+    
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "../php/insercaodados.php",true)
+
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4 && xhr.status == 200){
+            //alert('Sucesso');
+            console.log("Sucesso no envio do resultado");
+        }
+    }
+
+    xhr.send(formData);
+}
+
 
 Game.reload()
 
