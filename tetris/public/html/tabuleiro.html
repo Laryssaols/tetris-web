@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabuleiro</title>
+    <link rel="stylesheet" href="../css/layoutTabuleiro.css">
+    <link rel="shortcut icon" href="../images/tetrisIcon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <header>
+        <h1>TABULEIROS</h1>
+    </header>
+    <div class="centralizar">
+        <nav>
+            <h2>10x20</h2>
+            <div class="classico" id="opcaoClassico"></div>
+        </nav>
+        <nav>
+            <h2>22x44</h2>
+            <div class="maior" id="opcaoMaior"></div>
+        </nav>
+    </div>
+
+    <footer>
+        <p>Grupo 04 © 2023</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const opcaoClassico = document.getElementById("opcaoClassico");
+            const opcaoMaior = document.getElementById("opcaoMaior");
+        
+            opcaoClassico.addEventListener("click", function() {
+                localStorage.setItem("tamanhoTabuleiro", "1");
+                window.location.href = "../html/jogo.html";
+            });
+        
+            opcaoMaior.addEventListener("click", function() {
+                localStorage.setItem("tamanhoTabuleiro", "2");
+                window.location.href = "../html/jogo.html";
+            });
+        });
+    </script>
+</body>
+</html>

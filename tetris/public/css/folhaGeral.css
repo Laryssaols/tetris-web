@@ -1,0 +1,487 @@
+/* CONFIRURAÇÕES GERAIS PADRÃO */
+
+
+@import url('https://fonts.cdnfonts.com/css/tetris');
+
+
+body{
+    background-color: #00072D;
+    background-image: url('quadradinhos.png'); 
+    background-size: cover; 
+    margin: 0;
+    overflow-x: hidden;
+
+}
+
+
+.options{
+    display: flex;
+    margin-left: 50px;
+
+}  
+
+.options img {
+    width: 50px;
+    height: 50px;
+    transition: filter 0.3s;
+}
+  
+.options a:hover img {
+    filter: invert(10%) sepia(20%) saturate(100%);
+}
+
+/* a parte do link foi pega do site: https://pt.stackoverflow.com/questions/153761/como-tirar-a-cor-azul-de-links-ultilizando-css */
+
+a:link {
+    color: rgb(14, 0, 0);
+    text-decoration: none;
+    margin-right: 2%;
+    padding-bottom: 3%;
+ }
+ 
+ /* link que foi visitado */
+ a:visited {
+     color: rgb(0, 0, 0);
+ }
+ 
+ /* mouse over */
+ a:hover {
+     color: #aafda2;
+ }
+ 
+ /* link selecionado */
+ a:active {
+     color: #aafda2;
+}
+
+
+footer{
+    position:static;
+    bottom: 0;
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    width: 100%;
+    height: fit-content;
+    padding: 5px 5px;
+    background-color: #FF4A1C;
+}
+
+footer p {
+    margin: 0;
+    font-size: 12px;
+    padding-right: 1%;
+    color: white;
+    font-family: 'Tetris', sans-serif;
+}
+
+
+
+/* -------------------LOGIN------------------------- */
+
+@keyframes shine {
+    0% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+}
+
+.tituloLogin{
+    animation: shine 3s linear infinite;
+    font-family: 'Tetris';
+    color: aliceblue;
+    text-decoration:none
+}
+
+
+.login-container {
+    width: 550px;
+    height: 350px;
+    background-color: #FF4A1C;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Tetris';
+    box-shadow: 0 0 10px rgba(0, 0, 0, 2);
+    margin: 9% auto 0; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    /*width: 95%;*/
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 10px;
+    background-color: white;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.login-container button {
+    width: 90%;
+    margin-left: 5%;
+    padding: 10px;
+    margin-top: 5%;
+    background-color: #00072D;
+    color: white;
+    border: none;
+    font-family: 'Tetris';
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-container a {
+    margin-top: 10%;
+    padding-top: 20px;
+    display: block;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline;
+    font-family: 'Tetris';
+}
+
+
+.footerLogin{
+    position:fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    width: 100%;
+    height: fit-content;
+    padding: 5px 5px;
+    background-color: #FF4A1C;
+}
+
+.footerLogin p {
+    margin: 0;
+    font-size: 12px;
+    padding-right: 1%;
+    color: white;
+    font-family: 'Tetris', sans-serif;
+}
+
+/* -------------RANKING----------------------- */
+
+/* h1 */
+.tituloRanking{
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    text-shadow: 0 0 10px rgb(196, 192, 192);
+    text-align: center;
+    text-transform: uppercase; 
+    margin-top: 30px;
+    font-size: 60px;
+    letter-spacing: 2px;
+}
+
+/* h3 */
+.subtituloRanking{
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    text-align: center;
+    text-transform: uppercase; 
+    margin-top: 10px;  
+    letter-spacing: 2px;
+}
+
+/* p */
+.nomesEconteudoRanking{
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;   
+    letter-spacing: 1px;
+    font-size: large;
+    padding-bottom: 10px;
+}
+
+
+.fundoTabela {
+    width: 55%;
+    height: auto;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: 22%;
+    margin-bottom: 50px;
+    border-collapse:separate;
+    border: 7px solid #616161;
+}
+
+
+.fundoTabela th {
+    border: 2px solid #616161;
+}
+
+.fundoTabela td {
+    border: 2px solid #616161;
+    height: fit-content;
+}
+
+/*Linhas ímpares*/
+.fundoTabela tr:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.3); 
+}
+
+/*Linhas pares*/
+.fundoTabela tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1); 
+}
+
+.seta {
+    float: left;
+    position: relative;
+}
+
+.seta img {
+    width: 100px;
+    height: 100px;
+    margin-top: 115%;
+    margin-left: 150%;
+    animation: moveLeftRight 1s linear infinite; 
+}
+
+@keyframes moveLeftRight {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(50px); 
+    }
+}
+
+
+/*ìcones dos Jogadores*/
+.icone{
+    width: 100px;
+    height: 100px;
+    padding-left: 10px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10%;
+}
+
+img{
+    position: static;
+    padding-left: 20%;
+
+}
+
+/*Alinhar os ícones com os respectivos nomes dos jogadores*/
+
+.conteiner-imagem-nome {
+    display: flex;
+    align-items: center;
+ }
+
+ /* --------------CADASTRO-------------*/
+
+ @keyframes shine {
+    0% {
+      color: aliceblue;
+    }
+    50% {
+      color: #ff4a1c; /* Cor brilhante desejada */
+    }
+    100% {
+      color: aliceblue;
+    }
+  }
+  
+  .tituloCadastro {
+    animation: shine 3s linear infinite;
+    font-family: 'Tetris';
+    text-decoration: none;
+    text-align: center;
+  }
+
+  .cadastro-container {
+    width: 40%;
+    height: auto;
+    background-color: rgba(255, 74, 28, 1); 
+    border-radius: 10px;
+    padding: 5%;
+    font-family: 'Tetris', sans-serif; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+    margin-top: 100px;
+    margin-left: 25%;
+    margin-bottom: 100px;
+}
+
+.cadastro-container input[type="text"],
+.cadastro-container input[type="password"],
+.cadastro-container input[type="date"],
+.cadastro-container input[type="number"] {
+    width: 95%;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    margin-left: 19px;
+    border-radius: 5px;
+    font-size: 12px;
+    background-color: white;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.cadastro-container button {
+    width: 85%;
+    margin-left: 3%;
+    padding: 10px;
+    margin-top: 5%;
+    background-color: #00072D;
+    color: white;
+    border: none;
+    font-family: 'Tetris', sans-serif; 
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 40px;
+}
+
+.cadastro-container a {
+    margin-top: 10%;
+    padding-top: 20px;
+    display: block;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.cadFooter p {
+    margin: 0;
+    font-size: 12px;
+    padding-right: 1%;
+    color: white;
+    font-family: 'Tetris', sans-serif;
+}
+
+/* -----------------ATUALIZAÇÃO----------------*/
+
+/*Fontes do próprio tetris*/
+
+.h1Atu{
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    text-shadow: 0 0 10px rgb(196, 192, 192);
+    text-align: center;
+    text-transform: uppercase; 
+    margin-top: 30px;
+    font-size: 60px;
+    letter-spacing: 2px;
+}
+
+.h2Atu{
+    font-family: 'Tetris', sans-serif;
+    letter-spacing: 2px;
+    margin-left: 20px;
+    color: white;
+}
+
+.h3Atu{
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    margin-left: 20px;
+    margin-top: 10px;  
+    letter-spacing: 2px;
+}
+
+.pAtu{
+    font-family: 'Tetris', sans-serif;
+    letter-spacing: 1px;
+    font-size: large;
+    margin-left: 20px;
+    color: white;
+}
+
+.quadros{
+    width: 60%;
+    height: auto;
+    margin: 0 auto;
+    margin-bottom: 100px;
+    border-collapse:separate;
+    border: 7px solid #FF4A1C;
+    background-color: #FF4A1C;
+    border-radius: 10px;
+}
+
+.container {
+    font-family: 'Press Start 2P', cursive;
+    border-radius: 5px;
+    background-color: #FF4A1C;
+    padding: 20px;
+  }
+
+input[type=text], input[type=date], input[type=email], 
+input[type=password], input[type=number], select {
+    font-family: 'Press Start 2P', cursive;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+    font-size: 10px;
+  }
+
+input[type=text]:focus, input[type=date]:focus, input[type=email]:focus {
+    background-color: #ddd;
+    outline: none;
+  }
+
+
+
+.savebtn button:hover {
+    background-color: #454e87;
+    opacity:1;
+}
+
+.savebtn {
+    width: 70%;
+    padding: 10px;
+    margin-left: 15%;
+    margin-top: 4%;
+    background-color: #00072D;
+    color: white;
+    border: none;
+    font-family: 'Tetris';
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.savebtn button::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+
+
+
+

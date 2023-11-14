@@ -1,0 +1,22 @@
+<!-- codigo php -->
+
+<?php
+var_dump($_POST["timer"]);
+
+$servername = "mysql:host=localhost;dbname=tetris";
+$username = "root";
+$password = "";
+
+try {
+    $pdo = new PDO($servername, $username, $password);
+}
+catch (PDOException $e) {
+    die("Conexão falhou: ". $e->getMessage());
+}
+
+$stmt= $pdo->prepare("INSERT INTO result_game (time, score, level, `lines`, iduser) values(?, ?, ?, ?, ?)");
+
+$stmt->execute([$_POST["timer"], $_POST["score"], $_POST["level"], $_POST["lines"], 1]); 
+?>
+
+
