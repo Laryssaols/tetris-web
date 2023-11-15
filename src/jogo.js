@@ -312,6 +312,8 @@ class Game {
         Game.imagem('ended')
 
         salvarResultado();
+
+        carregarDadosJogada();
     }
 
     static generateRandomPiece() {
@@ -556,6 +558,38 @@ function salvarResultado() {
     }
 
     xhr.send(formData);
+}
+
+function carregarDadosJogada() {
+    // Limpa a tabela antes de carregar os novos dados
+    let tabela = document.getElementById("tabela");
+    tabela.innerHTML = "<tr><th>Best</th><th>Time</th><th>Score</th></tr>";
+
+    // Faz uma requisição para obter os dados do ranking
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "../php/obterJogadas.php", true);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            // Parse dos dados recebidos
+            let dados = JSON.parse(xhr.responseText);
+
+            console.log("Dados recebidos:", dados);
+
+            // Preenche a tabela com os dados
+            for (let i = 0; i < dados.length; i++) {
+                let row = tabela.insertRow(-1);
+                let cell1 = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+                cell1.innerHTML = i + 1;
+                cell2.innerHTML = dados[i].time;
+                cell3.innerHTML = dados[i].score;
+            }
+        }
+    }
+
+    xhr.send();
 }
 
 
