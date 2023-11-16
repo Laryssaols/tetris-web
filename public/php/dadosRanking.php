@@ -15,17 +15,13 @@ try {
 
 $usernameJogadorAtual = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
-//aqui eu peguei o score do jogador atual
-$scoreJogadorAtual = "SELECT `score` FROM `result_game` 
-                    INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                    WHERE `username` = :username";
-$stmtScoreJogadorAtual = $pdo->prepare($scoreJogadorAtual);
-$stmtScoreJogadorAtual->bindParam(':username', $usernameJogadorAtual);
-$stmtScoreJogadorAtual->execute();
-$scoreJogadorAtualResult = $stmtScoreJogadorAtual->fetch(PDO::FETCH_ASSOC);
+//aqui eu peguei o score do jogador atual, pq mesmo que ele esteja abaixo de 10 no ranking, ele precisa aparecer no ranking 
+    $scoreJogadorAtual = "SELECT `score` FROM `result_game` INNER JOIN  `user` ON `iduser` = `id` WHERE `username` = :username";
+    $stmtScoreJogadorAtual = $pdo->prepare($scoreCurrentPlayer);
+    $stmtScoreJogadorAtual->bindParam(':username', $username_do_jogador_atual);
+    $stmtScoreJogadorAtualr->execute();
+    $scoreJogadorAtualResult = $stmtScoreJogadorAtual->fetch(PDO::FETCH_ASSOC); //isso transforma eles em arrays igual o ultimo projeto do cadastro
 
-// Debugging output
-//var_dump($scoreJogadorAtualResult);
 
 //peguei os melhores 10 jogadores pelo score
 $stmt = $pdo->prepare("SELECT * FROM `result_game` ORDER BY  `score` DESC LIMIT 10");
