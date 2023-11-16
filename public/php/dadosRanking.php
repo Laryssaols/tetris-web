@@ -13,7 +13,7 @@
 
     $usernameJogadorAtual = $_SESSION['username'];
 
-//aqui eu peguei o score do jogador atual, pq mesmo que ele esteja abaixo de 10 no ranking, ele precisa aparecer no ranking 
+    //pegando score do jogador atual
     $scoreJogadorAtual = "SELECT `score` FROM `result_game` INNER JOIN  `user` ON `iduser` = `id` WHERE `username` = :username";
     $stmtScoreJogadorAtual = $pdo->prepare($scoreCurrentPlayer);
     $stmtScoreJogadorAtual->bindParam(':username', $username_do_jogador_atual);
