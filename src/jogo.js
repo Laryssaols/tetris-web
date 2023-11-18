@@ -312,8 +312,6 @@ class Game {
         Game.imagem('ended')
 
         salvarResultado();
-
-        carregarDadosJogada();
     }
 
     static generateRandomPiece() {
@@ -397,6 +395,8 @@ class Game {
         Game.runTimer()
         
         Game.generateRandomPiece();
+
+        carregarDadosJogada(); //ao começar o jogo vai carregar o raking das jogadas do usuario
         
         return Game.animationId = requestAnimationFrame(Game.loop);
     }
@@ -560,12 +560,13 @@ function salvarResultado() {
     xhr.send(formData);
 }
 
+//FUNCAO PARA IMPRIMIR O RANKING DO JOGADOR NA TELA DO JOGO 
 function carregarDadosJogada() {
     // Limpa a tabela antes de carregar os novos dados
     let tabela = document.getElementById("tabela");
     tabela.innerHTML = "<tr><th>Best</th><th>Time</th><th>Score</th></tr>";
 
-    // Faz uma requisição para obter os dados do ranking
+    // Faz uma requisição para obter os dados
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "../php/obterJogadas.php", true);
 

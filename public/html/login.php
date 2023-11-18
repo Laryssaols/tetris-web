@@ -14,6 +14,9 @@
             <input type="text" placeholder="Usuário" name="usuario" id="usuario">
             <input type="password" placeholder="Senha" name="senha" id="senha">
             <button type="submit" id="btn-jogar">Jogar</button>
+            <a href="cadastro.php">Cadastre-se</a>
+
+
         </form>
     </div>
     
