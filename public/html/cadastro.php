@@ -16,21 +16,15 @@ if (isset($_POST['cadastrar'])) {
 
     $query= mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email) VALUES ('$user', '$password', '$name', '$cpf', '$email')");
 
-/*
+
     if($query){
-        echo 'tá dando certo';
+        header("Location: login.php");
     }else{
         echo 'eita tristeza infinita';
     }
-*/
+
 }
 
-if ($query) {
-    header("Location: login.php");
-    exit();
-} else {
-    echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
-}
 
 
 ?>
