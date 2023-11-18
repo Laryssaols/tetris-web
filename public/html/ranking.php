@@ -1,51 +1,51 @@
 <?php
-session_start();
+    session_start();
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "tetris";
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "tetris";
 
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
-} catch (PDOException $e) {
-    die("Conexão falhou: " . $e->getMessage());
-}
-
-// Função para obter os dados do ranking
-function getRankingData($pdo, $usernameJogadorAtual) {
-   
-    $scoreJogadorAtual = "SELECT `result_game`.`score`, `result_game`.`level` FROM `result_game` 
-                        INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                        WHERE `user`.`username` = :username";
-    $stmtScoreJogadorAtual = $pdo->prepare($scoreJogadorAtual);
-    $stmtScoreJogadorAtual->bindParam(':username', $usernameJogadorAtual);
-    $stmtScoreJogadorAtual->execute();
-    $scoreJogadorAtualResult = $stmtScoreJogadorAtual->fetch(PDO::FETCH_ASSOC);
-
-    // Pegando os melhores 10 jogadores pelo score
-    $stmt = $pdo->prepare("SELECT * FROM `result_game` 
-                          INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                          ORDER BY  `result_game`.`score` DESC LIMIT 10");
-    $stmt->execute();
-    $topPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Substituindo o 10º jogador pelo jogador atual, se necessário
-    if (!empty($topPlayers) && count($topPlayers) >= 10 && $scoreJogadorAtualResult['score'] > $topPlayers[9]['score']) {
-        $topPlayers[9] = $scoreJogadorAtualResult;
-    } elseif (empty($topPlayers)) {
-        $topPlayers = array(); // Confere se $topPlayers é um array
+    try {
+        $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
+    } catch (PDOException $e) {
+        die("Conexão falhou: " . $e->getMessage());
     }
 
-    return $topPlayers;
-}
+    // Função para obter os dados do ranking
+    function getRankingData($pdo, $usernameJogadorAtual) {
+    
+        $scoreJogadorAtual = "SELECT `result_game`.`score`, `result_game`.`level` FROM `result_game` 
+                            INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
+                            WHERE `user`.`username` = :username";
+        $stmtScoreJogadorAtual = $pdo->prepare($scoreJogadorAtual);
+        $stmtScoreJogadorAtual->bindParam(':username', $usernameJogadorAtual);
+        $stmtScoreJogadorAtual->execute();
+        $scoreJogadorAtualResult = $stmtScoreJogadorAtual->fetch(PDO::FETCH_ASSOC);
 
-// Obtem os dados do ranking
-$topPlayers = getRankingData($pdo, isset($_SESSION['username']) ? $_SESSION['username'] : null);
+        // Pegando os melhores 10 jogadores pelo score
+        $stmt = $pdo->prepare("SELECT * FROM `result_game` 
+                            INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
+                            ORDER BY  `result_game`.`score` DESC LIMIT 10");
+        $stmt->execute();
+        $topPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Envia dados do ranking como JSON para o JS
-echo "<script>var rankingData = " . json_encode($topPlayers) . ";</script>";
+        // Substituindo o 10º jogador pelo jogador atual, se necessário
+        if (!empty($topPlayers) && count($topPlayers) >= 10 && $scoreJogadorAtualResult['score'] > $topPlayers[9]['score']) {
+            $topPlayers[9] = $scoreJogadorAtualResult;
+        } elseif (empty($topPlayers)) {
+            $topPlayers = array(); // Confere se $topPlayers é um array
+        }
+
+        return $topPlayers;
+    }
+
+    // Obtem os dados do ranking
+    $topPlayers = getRankingData($pdo, isset($_SESSION['username']) ? $_SESSION['username'] : null);
+
+    // Envia dados do ranking como JSON para o JS
+    echo "<script>var rankingData = " . json_encode($topPlayers) . ";</script>";
 
 ?>
 
@@ -83,14 +83,14 @@ echo "<script>var rankingData = " . json_encode($topPlayers) . ";</script>";
             <tbody>
                 <?php
                 // Itera sobre os dados do ranking e gera as linhas da tabela
-                foreach ($topPlayers as $index => $player) {
-                    echo "<tr>";
-                    echo "<td><p class='nomesEconteudoRanking'>" . ($index + 1) . "</p></td>";
-                    echo "<td><p class='nomesEconteudoRanking'>" . (isset($player['username']) ? $player['username'] : '') . "</p></td>";
-                    echo "<td><p class='nomesEconteudoRanking'>{$player['score']}</p></td>";
-                    echo "<td><p class='nomesEconteudoRanking'>{$player['level']}</p></td>";
-                    echo "</tr>";
-                }
+                    foreach ($topPlayers as $index => $player) {
+                        echo "<tr>";
+                        echo "<td><p class='nomesEconteudoRanking'>" . ($index + 1) . "</p></td>";
+                        echo "<td><p class='nomesEconteudoRanking'>" . (isset($player['username']) ? $player['username'] : '') . "</p></td>";
+                        echo "<td><p class='nomesEconteudoRanking'>{$player['score']}</p></td>";
+                        echo "<td><p class='nomesEconteudoRanking'>{$player['level']}</p></td>";
+                        echo "</tr>";
+                    }
                 ?>
             </tbody>
         </table>
