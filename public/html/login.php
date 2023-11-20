@@ -14,6 +14,9 @@
             <input type="text" placeholder="Usuário" name="usuario" id="usuario">
             <input type="password" placeholder="Senha" name="senha" id="senha">
             <button type="submit" id="btn-jogar">Jogar</button>
+            <a href="cadastro.php">Cadastre-se</a>
+
+
         </form>
     </div>
     
@@ -39,8 +42,16 @@
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
+            // Obter a primeira linha do resultado como uma array associativa
+            $row = $result->fetch_assoc();
+            // Obter o ID do usuário
+            $userId = $row['id'];
+            // Iniciar a sessão
+            session_start();
+            // Armazena o ID do usuário na sessão
+            $_SESSION['userId'] = $userId;
             // Liberado!Pode abrir jogo.
-            header("Location: jogo.html");
+            header("Location: tabuleiro.html");
             exit();
         } else {
             // Bloqueado

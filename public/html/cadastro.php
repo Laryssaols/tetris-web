@@ -4,44 +4,37 @@ $user = "root";
 $senha = "";
 $database = "tetris";
 
-$connection = new mysqli($host, $user, $senha, $database) or die ("ERRO DE CONEXÃO!!!");
-
+$connection = new mysqli($host, $user, $senha, $database) or die("ERRO DE CONEXÃO!!!");
 
 if (isset($_POST['cadastrar'])) {
-    $user = $_POST['userName'];
-    $password = $_POST['password'];
-    $name = $_POST['name'];
-    $cpf = $_POST['cpf'];
-    $email = $_POST['email'];
+    $user = mysqli_real_escape_string($connection, $_POST['userName']);
+    $password = mysqli_real_escape_string($connection, $_POST['password']);
+    $name = mysqli_real_escape_string($connection, $_POST['name']);
+    $cpf = mysqli_real_escape_string($connection, $_POST['cpf']);
+    $email = mysqli_real_escape_string($connection, $_POST['email']);
+    $dt_nasc = mysqli_real_escape_string($connection, $_POST['dataNascimento']);
 
-    $query= mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email) VALUES ('$user', '$password', '$name', '$cpf', '$email')");
+    if (empty($user) || empty($password) || empty($name) || empty($cpf) || empty($email) || empty($dt_nasc)) {
+        echo 'Por favor, preencha todos os campos.';
+    } else {
+        // Verificação de e-mail único
+        $checkEmailQuery = mysqli_query($connection, "SELECT * FROM user WHERE email='$email'");
+        if (mysqli_num_rows($checkEmailQuery) > 0) {
+            echo 'E-mail já cadastrado. Escolha outro e-mail.';
+        } else {
+            // Inserir no banco de dados se todas as verificações passarem
+            $query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, data_nascimento) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$dt_nasc')");
 
-/*
-    if($query){
-        echo 'tá dando certo';
-    }else{
-        echo 'eita tristeza infinita';
+            if ($query) {
+                header("Location: login.php");
+                exit();
+            } else {
+                echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
+            }
+        }
     }
-*/
 }
-
-if ($query) {
-    header("Location: login.php");
-    exit();
-} else {
-    echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
-}
-
-
 ?>
-
-
-
-
-
-
-
-
 
 
 
@@ -69,7 +62,7 @@ if ($query) {
             <input type="password" id="confirmarSenha" placeholder="Confirme sua senha">
             <input type="text" id="nomeCompleto" name="name" placeholder="Digite seu nome completo">
             <input type="number" id="cpf"  name="cpf" placeholder="Digite seu CPF">
-            <input type="date" id="dataNascimento">
+            <input type="date" id="dataNascimento" name="dataNascimento">
             <input type="text" id="email" name="email" placeholder="Digite seu e-mail">
             <input type="text" id="confirmarEmail"placeholder="Confirme seu e-mail">
            
