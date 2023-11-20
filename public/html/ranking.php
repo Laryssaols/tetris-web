@@ -1,56 +1,43 @@
 <?php
-session_start();
+    session_start();
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "tetris";
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "tetris";
 
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
-} catch (PDOException $e) {
-    die("Conexão falhou: " . $e->getMessage());
-}
-
-// Função para obter os dados do ranking
-function getRankingData($pdo, $usernameJogadorAtual) {
-   
-    $scoreJogadorAtual = "SELECT `result_game`.`score`, `result_game`.`level` FROM `result_game` 
-                        INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                        WHERE `user`.`username` = :username";
-    $stmtScoreJogadorAtual = $pdo->prepare($scoreJogadorAtual);
-    $stmtScoreJogadorAtual->bindParam(':username', $usernameJogadorAtual);
-    $stmtScoreJogadorAtual->execute();
-    $scoreJogadorAtualResult = $stmtScoreJogadorAtual->fetch(PDO::FETCH_ASSOC);
-
-    // Pegando os melhores 10 jogadores pelo score
-    $stmt = $pdo->prepare("SELECT * FROM `result_game` 
-                          INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                          ORDER BY  `result_game`.`score` DESC LIMIT 10");
-    $stmt->execute();
-    $topPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Substituindo o 10º jogador pelo jogador atual, se necessário
-    if (!empty($topPlayers) && count($topPlayers) >= 10 && $scoreJogadorAtualResult['score'] > $topPlayers[9]['score']) {
-        $topPlayers[9] = $scoreJogadorAtualResult;
-    } elseif (empty($topPlayers)) {
-        $topPlayers = array(); // Confere se $topPlayers é um array
+    try {
+        $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
+    } catch (PDOException $e) {
+        die("Conexão falhou: " . $e->getMessage());
     }
 
-    return $topPlayers;
-}
+    $usernameJogadorAtual = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
-// Obtem os dados do ranking
-$topPlayers = getRankingData($pdo, isset($_SESSION['username']) ? $_SESSION['username'] : null);
+    // Função para obter os dados do ranking 
+    function getRankingData($pdo, $usernameJogadorAtual) {
+        // Pegando os melhores 10 jogadores pelo score e os colocando em $topPlayers
+        $stmt = $pdo->prepare("SELECT  `result_game`.`score`, `result_game`.`level`, `user`.`userName` FROM `result_game` 
+                            INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
+                            ORDER BY  `result_game`.`score` DESC LIMIT 10");
+        $stmt->execute();
+        $topPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Envia dados do ranking como JSON para o JS
-echo "<script>var rankingData = " . json_encode($topPlayers) . ";</script>";
+        while (count($topPlayers) < 10) {
+            $topPlayers[] = array('score' => 'NULL', 'level' => 'NULL', 'userName' => 'NULL');
+        }
+
+        return $topPlayers;
+    }  
+    // Obtem os dados do ranking
+    $topPlayers = getRankingData($pdo, isset($_SESSION['username']) ? $_SESSION['username'] : null);
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,42 +45,78 @@ echo "<script>var rankingData = " . json_encode($topPlayers) . ";</script>";
     <link rel="shortcut icon" href="tetrisIcon.png">
     <link rel="stylesheet" href="../css/folhaGeral.css">
 </head>
+
 <body>
     <header>
-        <h1 class="tituloRanking">Ranking</h1>
-        <h3 class="subtituloRanking">Top players scores of the game</h3>
+        <h1 class="tituloRanking">
+            Ranking
+        </h1>
+        <h3 class="subtituloRanking">
+            top players scores of the game
+        </h3>
     </header>
 
     <main>
-        <!--Aqui será exibido as infos do player atual-->
-        <div class="seta">
-            <img src="../images/seta.png" alt="seta">
-        </div>
+        <table class="fundoTabela">
+            <tr>
+                <th>
+                    <p class="nomesEconteudoRanking">
+                        position
+                    </p>
+                </th>
+                <th>
+                    <p class="nomesEconteudoRanking">
+                        username
+                    </p>
+                </th>
+                <th>
+                    <p class="nomesEconteudoRanking">
+                        score
+                    </p>
+                </th>
+                <th>
+                    <p class="nomesEconteudoRanking">
+                        level
+                    </p>
+                </th>
+            </tr>
+            <?php
+                foreach ($topPlayers as $position => $player) {
 
-        <!--Aqui será exibido as infos do ranking global-->
-        <table class="fundoTabela" id="rankingTable">
-            <thead>
-                <tr>
-                    <th><p class="nomesEconteudoRanking">Position</p> </th>
-                    <th><p class="nomesEconteudoRanking">Username</p></th>
-                    <th><p class="nomesEconteudoRanking">Score</p </th>
-                    <th><p class="nomesEconteudoRanking">Level</p></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Itera sobre os dados do ranking e gera as linhas da tabela
-                foreach ($topPlayers as $index => $player) {
                     echo "<tr>";
-                    echo "<td><p class='nomesEconteudoRanking'>" . ($index + 1) . "</p></td>";
-                    echo "<td><p class='nomesEconteudoRanking'>" . (isset($player['username']) ? $player['username'] : '') . "</p></td>";
-                    echo "<td><p class='nomesEconteudoRanking'>{$player['score']}</p></td>";
-                    echo "<td><p class='nomesEconteudoRanking'>{$player['level']}</p></td>";
+
+                    $dadosJogadorAtual = "SELECT `user`.`userName` FROM `result_game` 
+                    INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
+                    WHERE `user`.`userName` = :username";
+                    $stmtdadosJogadorAtual = $pdo->prepare($dadosJogadorAtual);
+                    $stmtdadosJogadorAtual->bindParam(':username', $usernameJogadorAtual);
+                    $stmtdadosJogadorAtual->execute();
+                    $JogadorAtualResult = $stmtdadosJogadorAtual->fetch(PDO::FETCH_ASSOC);
+                    
+                    if ($JogadorAtualResult !== false && is_array($JogadorAtualResult)) {
+                        $celulaMarcada = ($player['userName'] == $usernameJogadorAtual) ? 'celulaEspecial' : '';
+                    } else {
+                        $celulaMarcada = ''; 
+                    }
+                
+                    echo "<td class= $celulaMarcada ><p class='nomesEconteudoRanking'>" . ($position + 1) . "</p></td>";
+
+                    
+                    if ($player['userName'] != 'NULL') {
+                        echo "<td><p class='nomesEconteudoRanking'>" . $player['userName'] . "</p></td>";
+                        echo "<td><p class='nomesEconteudoRanking'>" . $player['score'] . "</p></td>";
+                        echo "<td><p class='nomesEconteudoRanking'>" . $player['level'] . "</p></td>";
+                    } else {
+                        echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
+                        echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
+                        echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
+                    }
+                    
                     echo "</tr>";
                 }
-                ?>
-            </tbody>
+            ?>
         </table>
+
         <div class="options">
             <a href="jogo.html"> <img src="../images/voltar.png" alt="Jogo"></a>
         </div>
@@ -110,6 +133,6 @@ echo "<script>var rankingData = " . json_encode($topPlayers) . ";</script>";
     </script>
 
     <script src="ranking.js"></script>
-
 </body>
+
 </html>

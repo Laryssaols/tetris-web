@@ -42,8 +42,16 @@
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
+            // Obter a primeira linha do resultado como uma array associativa
+            $row = $result->fetch_assoc();
+            // Obter o ID do usuário
+            $userId = $row['id'];
+            // Iniciar a sessão
+            session_start();
+            // Armazena o ID do usuário na sessão
+            $_SESSION['userId'] = $userId;
             // Liberado!Pode abrir jogo.
-            header("Location: jogo.html");
+            header("Location: tabuleiro.html");
             exit();
         } else {
             // Bloqueado
