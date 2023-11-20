@@ -235,6 +235,9 @@ footer p {
     height: fit-content;
 }
 
+.celulaEspecial {
+    border: 2px solid #e6dede;
+}
 /*Linhas ímpares*/
 .fundoTabela tr:nth-child(odd) {
     background-color: rgba(255, 255, 255, 0.3); 
@@ -245,18 +248,6 @@ footer p {
     background-color: rgba(255, 255, 255, 0.1); 
 }
 
-.seta {
-    float: left;
-    position: relative;
-}
-
-.seta img {
-    width: 100px;
-    height: 100px;
-    margin-top: 115%;
-    margin-left: 150%;
-    animation: moveLeftRight 1s linear infinite; 
-}
 
 @keyframes moveLeftRight {
     0%, 100% {

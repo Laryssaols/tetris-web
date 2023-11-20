@@ -20,35 +20,44 @@
         </form>
     </div>
     
-<?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "tetris";
+    <?php
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "tetris";
 
-    $userName = $_POST['usuario']; 
-    $passwordInput = $_POST['senha'];
+        $userName = $_POST['usuario']; 
+        $passwordInput = $_POST['senha'];
 
-    // Criar
-    $conn = new mysqli($servername, $username, $password, $dbname);
+        // Criar
+        $conn = new mysqli($servername, $username, $password, $dbname);
 
 
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
 
-    // Query 
-    $sql = "SELECT * FROM `user` WHERE `userName` = '$userName' AND `password` = '$passwordInput'";
-    $result = $conn->query($sql);
+        // Query 
+        $sql = "SELECT * FROM `user` WHERE `userName` = '$userName' AND `password` = '$passwordInput'";
+        $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        // Liberado!Pode abrir jogo.
-        header("Location: jogo.html");
-        exit();
-    } else {
-        // Bloqueado
-        echo "Usuário e senha incorretos";
-    }
+        if ($result->num_rows > 0) {
+            // Obter a primeira linha do resultado como uma array associativa
+            $row = $result->fetch_assoc();
+            // Obter o ID do usuário
+            $userId = $row['id'];
+            // Iniciar a sessão
+            session_start();
+            // Armazena o ID do usuário na sessão
+            $_SESSION['userId'] = $userId;
+
+            // Liberado!Pode abrir jogo.
+            header("Location: tabuleiro.html");
+            exit();
+        } else {
+            // Bloqueado
+            echo "Usuário e senha incorretos";
+        }
         $conn->close();
     ?>
 

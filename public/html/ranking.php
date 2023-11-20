@@ -17,31 +17,12 @@
 
     // Função para obter os dados do ranking 
     function getRankingData($pdo, $usernameJogadorAtual) {
-        $scoreJogadorAtual = "SELECT `result_game`.`score`, `result_game`.`level` FROM `result_game` 
-                            INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                            WHERE `user`.`username` = :username";
-        $stmtScoreJogadorAtual = $pdo->prepare($scoreJogadorAtual);
-        $stmtScoreJogadorAtual->bindParam(':username', $usernameJogadorAtual);
-        $stmtScoreJogadorAtual->execute();
-        $scoreJogadorAtualResult = $stmtScoreJogadorAtual->fetch(PDO::FETCH_ASSOC);
-
-        // Pegando os melhores 10 jogadores pelo score
+        // Pegando os melhores 10 jogadores pelo score e os colocando em $topPlayers
         $stmt = $pdo->prepare("SELECT  `result_game`.`score`, `result_game`.`level`, `user`.`userName` FROM `result_game` 
                             INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
                             ORDER BY  `result_game`.`score` DESC LIMIT 10");
         $stmt->execute();
         $topPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if ($scoreJogadorAtualResult && $scoreJogadorAtualResult['score'] <= $topPlayers[9]['score']) {
-            // Pega as informações do player atual
-            $stmtJogadorAtual = $pdo->prepare("SELECT  `result_game`.`score`, `result_game`.`level`, `user`.`userName` FROM `result_game` 
-                                            INNER JOIN  `user` ON `result_game`.`iduser` = `user`.`id` 
-                                            WHERE `user`.`username` = :username");
-            $stmtJogadorAtual->bindParam(':username', $usernameJogadorAtual);
-            $stmtJogadorAtual->execute();
-            $jogadorAtual = $stmtJogadorAtual->fetch(PDO::FETCH_ASSOC);
-            $topPlayers[9] = $jogadorAtual;
-        }
 
         while (count($topPlayers) < 10) {
             $topPlayers[] = array('score' => 'NULL', 'level' => 'NULL', 'userName' => 'NULL');
@@ -76,12 +57,6 @@
     </header>
 
     <main>
-        <!-- Aqui será exibido as infos do player atual -->
-        <div class="seta">
-            <img src="../images/seta.png" alt="seta">
-        </div>
-
-        <!-- Aqui será exibido as infos do ranking global -->
         <table class="fundoTabela">
             <tr>
                 <th>
@@ -107,8 +82,25 @@
             </tr>
             <?php
                 foreach ($topPlayers as $position => $player) {
+
                     echo "<tr>";
-                    echo "<td><p class='nomesEconteudoRanking'>" . ($position + 1) . "</p></td>";
+
+                    $dadosJogadorAtual = "SELECT `user`.`userName` FROM `result_game` 
+                    INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
+                    WHERE `user`.`userName` = :username";
+                    $stmtdadosJogadorAtual = $pdo->prepare($dadosJogadorAtual);
+                    $stmtdadosJogadorAtual->bindParam(':username', $usernameJogadorAtual);
+                    $stmtdadosJogadorAtual->execute();
+                    $JogadorAtualResult = $stmtdadosJogadorAtual->fetch(PDO::FETCH_ASSOC);
+                    
+                    if ($JogadorAtualResult !== false && is_array($JogadorAtualResult)) {
+                        $celulaMarcada = ($player['userName'] == $usernameJogadorAtual) ? 'celulaEspecial' : '';
+                    } else {
+                        $celulaMarcada = ''; 
+                    }
+                
+                    echo "<td class= $celulaMarcada ><p class='nomesEconteudoRanking'>" . ($position + 1) . "</p></td>";
+
                     
                     if ($player['userName'] != 'NULL') {
                         echo "<td><p class='nomesEconteudoRanking'>" . $player['userName'] . "</p></td>";
