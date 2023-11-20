@@ -1,138 +1,146 @@
-<?php
-    session_start();
-
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "tetris";
-
-    try {
-        $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
-    } catch (PDOException $e) {
-        die("Conexão falhou: " . $e->getMessage());
-    }
-
-    $usernameJogadorAtual = isset($_SESSION['username']) ? $_SESSION['username'] : null;
-
-    // Função para obter os dados do ranking 
-    function getRankingData($pdo, $usernameJogadorAtual) {
-        // Pegando os melhores 10 jogadores pelo score e os colocando em $topPlayers
-        $stmt = $pdo->prepare("SELECT  `result_game`.`score`, `result_game`.`level`, `user`.`userName` FROM `result_game` 
-                            INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                            ORDER BY  `result_game`.`score` DESC LIMIT 10");
-        $stmt->execute();
-        $topPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        while (count($topPlayers) < 10) {
-            $topPlayers[] = array('score' => 'NULL', 'level' => 'NULL', 'userName' => 'NULL');
-        }
-
-        return $topPlayers;
-    }  
-    // Obtem os dados do ranking
-    $topPlayers = getRankingData($pdo, isset($_SESSION['username']) ? $_SESSION['username'] : null);
-
-?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking</title>
-    <link rel="shortcut icon" href="tetrisIcon.png">
-    <link rel="stylesheet" href="../css/folhaGeral.css">
+    <link rel="shortcut icon" href="../images/tetrisIcon.png">
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <title>Tetris</title>
 </head>
 
 <body>
-    <header>
-        <h1 class="tituloRanking">
-            Ranking
-        </h1>
-        <h3 class="subtituloRanking">
-            top players scores of the game
-        </h3>
-    </header>
+    <h1>
+   TETRIS
+</h1>
 
     <main>
-        <table class="fundoTabela">
-            <tr>
-                <th>
-                    <p class="nomesEconteudoRanking">
-                        position
-                    </p>
-                </th>
-                <th>
-                    <p class="nomesEconteudoRanking">
-                        username
-                    </p>
-                </th>
-                <th>
-                    <p class="nomesEconteudoRanking">
-                        score
-                    </p>
-                </th>
-                <th>
-                    <p class="nomesEconteudoRanking">
-                        level
-                    </p>
-                </th>
-            </tr>
-            <?php
-                foreach ($topPlayers as $position => $player) {
+        <section class="coluna">
 
-                    echo "<tr>";
+            <div class="linha">
+                <h2> TIME</h2>
+                <span id="timer" class="time">0:00</span>
+            </div>
 
-                    $dadosJogadorAtual = "SELECT `user`.`userName` FROM `result_game` 
-                    INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                    WHERE `user`.`userName` = :username";
-                    $stmtdadosJogadorAtual = $pdo->prepare($dadosJogadorAtual);
-                    $stmtdadosJogadorAtual->bindParam(':username', $usernameJogadorAtual);
-                    $stmtdadosJogadorAtual->execute();
-                    $JogadorAtualResult = $stmtdadosJogadorAtual->fetch(PDO::FETCH_ASSOC);
-                    
-                    if ($JogadorAtualResult !== false && is_array($JogadorAtualResult)) {
-                        $celulaMarcada = ($player['userName'] == $usernameJogadorAtual) ? 'celulaEspecial' : '';
-                    } else {
-                        $celulaMarcada = ''; 
-                    }
-                
-                    echo "<td class= $celulaMarcada ><p class='nomesEconteudoRanking'>" . ($position + 1) . "</p></td>";
+            <div class="linha">
+                <h2>SCORE</h2>
+                <span id="score"></span>
+            </div>
 
-                    
-                    if ($player['userName'] != 'NULL') {
-                        echo "<td><p class='nomesEconteudoRanking'>" . $player['userName'] . "</p></td>";
-                        echo "<td><p class='nomesEconteudoRanking'>" . $player['score'] . "</p></td>";
-                        echo "<td><p class='nomesEconteudoRanking'>" . $player['level'] . "</p></td>";
-                    } else {
-                        echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
-                        echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
-                        echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
-                    }
-                    
-                    echo "</tr>";
-                }
-            ?>
-        </table>
+            <div class="linha">
+                <h2>LEVEL</h2>
+                <span id="level"></span>
+            </div>
 
-        <div class="options">
-            <a href="jogo.html"> <img src="../images/voltar.png" alt="Jogo"></a>
+            <div class="linha">
+                <h2>LINES</h2>
+                <span id="line"></span>
+            </div>
+        </section>
+
+        <div id="game" class="full-screen with-bg">
+            <canvas id="tetris" width="200" height="400"></canvas>
+        </div>
+
+        <div class="right-data">
+            <div id="ranking">
+                <h2 id="ranking-texto">
+                MY RANKIG
+            </h2>
+
+                <table id="tabela">
+                    <tr>
+                        <th>
+                            Best
+                        </th>
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Score
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            1
+                        </td>
+
+                        <td>
+                            02:10
+                        </td>
+
+                        <td>
+                            11790
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            2
+                        </td>
+
+                        <td>
+                            01:52
+                        </td>
+
+                        <td>
+                            1990
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            3
+                        </td>
+
+                        <td>
+                            01:03
+                        </td>
+
+                        <td>
+                            1000
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            4
+                        </td>
+                        <td>
+                            00:58
+                        </td>
+                        <td>
+                            538
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>5</td>
+                        <td>00:10</td>
+                        <td>100</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="options">
+                <a href="login.html"><img src="../images/Home.png" alt="Home"></a>
+                <a href="Ranking.html"> <img src="../images/Ranking.png" alt="Ranking" width="100px" height="100px"></a>
+                <a href="atualizacao.html"> <img src="../images/Login.png" alt="Atualização" width="100px" height="100px"></a>
+                <a id="pausa" onclick="Game.pause()"><img src="../images/pausa.png" alt="pausa"></a>
+                <a id="reinicia" onclick="Game.reload()"><img src="../images/atualiza.png" alt="reinicia"></a>
+            </div>
         </div>
     </main>
 
+
     <footer>
-        <p>
-            Grupo 04 © 2023
-        </p>
+        <p>Grupo 04 © 2023</p>
     </footer>
 
-    <script>
-        var rankingData = <?php echo json_encode($topPlayers); ?>;
-    </script>
+    <script src="../../src/esqueletopeca.js"></script>
+    <script src="../../src/funcoes.js"></script>
+    <script src="../../src/jogo.js"></script>
+    <script src="../../src/tabuleiro.js"></script>
 
-    <script src="ranking.js"></script>
+
+
 </body>
-
 </html>
