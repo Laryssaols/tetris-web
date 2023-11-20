@@ -1,102 +1,72 @@
 <?php
-    function authenticate($username, $password) {
-        $servername = "localhost";
-        $db_username = "root";
-        $db_password = "";
-        $dbname = "tetris";
+    
+  $servername = "localhost";
+  $username = "root";
+  $password = "";
+  $dbname = "tetris";
 
-        $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+  session_start();
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+  // Checa se o ID foi definido na sessão
+  if (!isset($_SESSION['userId'])) {
+      die("Erro: ID do usuário não está definido na sessão.");
+  }
 
-        $stmt = $conn->prepare("SELECT id, password FROM `user` WHERE userName = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $stmt->bind_result($id, $dbPassword);
-        $stmt->fetch();
-        $stmt->close();
-        $conn->close();
+  // Salva o ID do usuário que logou
+  $loggedUser = $_SESSION['userId'];
 
-        
-        if ($id && password_verify($password, $dbPassword)) {
-            return $id;
-        }
+  $conn = new mysqli($servername, $username, $password, $dbname);
 
-        return null; 
-    }
+  if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+  }
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "tetris";
-
-
-    session_start();
-
-    // Checa se o ID foi definido na sessão
-    if (!isset($_SESSION['id'])) {
-        die("Erro: ID do usuário não está definido na sessão.");
-    }
-
-    // salva o ID do usuário que logou
-    $loggedUser = $_SESSION['id'];
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Atualiza o nome
-    if (isset($_POST['newName'])) {
+  // Atualiza o nome
+  if (isset($_POST['newName'])) {
       $newName = $_POST['newName'];
-      $updateName = "UPDATE `user` SET `name` = '$newName' WHERE `id` = $loggedInUser";
+      $updateName = "UPDATE `user` SET `name` = '$newName' WHERE `id` = $loggedUser";
       $conn->query($updateName);
-    }
+  }
 
-    // Atualiza o numero do telefone
-    if (isset($_POST['phone'])) {
-        $newPhone = $_POST['phone'];
-        $updatePhone = "UPDATE `user` SET `phone` = '$newPhone' WHERE `id` = $loggedUser";
-        $conn->query($updatePhone);
-    }
+  // Atualiza o número do telefone
+  if (isset($_POST['phone'])) {
+      $newPhone = $_POST['phone'];
+      $updatePhone = "UPDATE `user` SET `phone` = '$newPhone' WHERE `id` = $loggedUser";
+      $conn->query($updatePhone);
+  }
 
-    // Atualiza a senha
-    if (isset($_POST['senhaAtual']) && isset($_POST['novaSenha']) && isset($_POST['confirmarNovaSenha'])) {
-        $senhaAtual = $_POST['senhaAtual'];
-        $novaSenha = $_POST['novaSenha'];
-        $confirmarNovaSenha = $_POST['confirmarNovaSenha'];
+  // Atualiza a senha
+  if (isset($_POST['senhaAtual']) && isset($_POST['novaSenha']) && isset($_POST['confirmarNovaSenha'])) {
+      $senhaAtual = $_POST['senhaAtual'];
+      $novaSenha = $_POST['novaSenha'];
+      $confirmarNovaSenha = $_POST['confirmarNovaSenha'];
 
-       //Verifica se a senha esta correta
-        $loggedUserId = authenticate($_SESSION['username'], $senhaAtual);
+      // Verifica se a senha está correta
+      $loggedUser = authenticate($_SESSION['username'], $senhaAtual);
 
-        if ($loggedUserId !== null && $novaSenha === $confirmarNovaSenha) {
-          
-            $hashedPassword = password_hash($novaSenha, PASSWORD_DEFAULT);
-            $updatePassword = "UPDATE `user` SET `password` = '$hashedPassword' WHERE `id` = $loggedUserId";
-            $conn->query($updatePassword);
-        } else {
-            echo "Erro: Senha atual incorreta ou as novas senhas não coincidem.";
-        }
-    }
+      if ($loggedUserId !== null && $novaSenha === $confirmarNovaSenha) {
+          $updatePassword = "UPDATE `user` SET `password` = '$novaSenha' WHERE `id` = $loggedUser";
+          $conn->query($updatePassword);
+      } else {
+          echo "Erro: Senha atual incorreta ou as novas senhas não coincidem.";
+      }
+  }
 
-    // Atualiza o emial
-    if (isset($_POST['myemail']) && isset($_POST['emailConfirm'])) {
-        $newEmail = $_POST['myemail'];
-        $confirmEmail = $_POST['emailConfirm'];
+  // Atualiza o email
+  if (isset($_POST['myemail']) && isset($_POST['emailConfirm'])) {
+      $newEmail = $_POST['myemail'];
+      $confirmEmail = $_POST['emailConfirm'];
 
-        if ($newEmail === $confirmEmail) {
-            
-            $updateEmail = "UPDATE `user` SET `email` = '$newEmail' WHERE `id` = $loggedUser";
-            $conn->query($updateEmail);
-        } else {
-            echo "Erro: Os endereços de e-mail não coincidem.";
-        }
-    }
+      if ($newEmail === $confirmEmail) {
+          $updateEmail = "UPDATE `user` SET `email` = '$newEmail' WHERE `id` = $loggedUser";
+          $conn->query($updateEmail);
+      } else {
+          echo "Erro: Os endereços de e-mail não coincidem.";
+      }
+  }
 
-    $conn->close();
+  $conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -111,60 +81,62 @@
 </head>
 <body>
 
-  <header>
+<header>
     <h1 class="h1Atu">Atualização <br>Cadastro</h1>
-  </header>
+</header>
 
-    <div class="quadros">
-      <h2 class="h2Atu" id="infopesso">Informações Pessoais</h2>
-        <div class="container">
+<div class="quadros">
+    <h2 class="h2Atu" id="infopesso">Informações Pessoais</h2>
+    <div class="container">
         <form id="formName" method="post" action="atualizacao.php">
 
-          <label for="newName">NOME COMPLETO</label>
-          <input type="text" id="newName" name="newName" placeholder="Digite seu nome completo">
+            <label for="newName">NOME COMPLETO</label>
+            <input type="text" id="newName" name="newName" placeholder="Digite seu nome completo">
 
-          <label for="nasc">DATA DE NASCIMENTO</label>
-          <input type="date" id="nasc" disabled="">
+            <label for="nasc">DATA DE NASCIMENTO</label>
+            <input type="date" id="nasc" disabled="">
 
-          <label for="cpf">CPF</label>
-          <input type="text" id="cpf" placeholder="CPF" disabled="">
+            <label for="cpf">CPF</label>
+            <input type="text" id="cpf" placeholder="CPF" disabled="">
 
-          <label for="phone">TELEFONE</label>
-          <input type="text" id="phone" name="phone" placeholder="(XX)XXXXX-XXXX">
+            <label for="phone">TELEFONE</label>
+            <input type="text" id="phone" name="phone" placeholder="(XX)XXXXX-XXXX">
 
-          <div class="buttonAtu">
-              <button type="submit" class="savebtn" id="saveBtnInfopesso">Salvar Alterações</button>
-          </div>
+            <div class="buttonAtu">
+                <button type="submit" class="savebtn" id="saveBtnInfopesso">Salvar Alterações</button>
+            </div>
         </form>
-        </div>
     </div>
-    <div class="quadros"> 
-      <h2 class="h2Atu">Configurações de Login</h2>
-        <div class="container">
-          <form id="configLoginForm" method="post" action="atualizacao.php">
+</div>
+
+<div class="quadros"> 
+    <h2 class="h2Atu">Configurações de Login</h2>
+    <div class="container">
+        <form id="configLoginForm" method="post" action="atualizacao.php">
             <label for="username">USERNAME</label>
-            <input type="text" id="username" placeholder="Username" disabled = "">
-                    
+            <input type="text" id="username" placeholder="Username" disabled="">
+
             <h3 class="h3Atu">Alterar Senha</h3>
             <label for="senhaAtual">SENHA ATUAL</label>
             <input type="password" id="senhaAtual" name="senhaAtual" placeholder="Digite sua senha atual">
-                    
+
             <label for="novaSenha">NOVA SENHA</label>
             <input type="password" id="novaSenha" name="novaSenha" placeholder="Digite nova senha">
-                    
+
             <label for="novaSenha2">CONFIRMAR NOVA SENHA</label>
-            <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha"  placeholder="Confirme nova senha">
-                    
+            <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Confirme nova senha">
+
             <div class="buttonAtu">
-              <button type="submit" class="savebtn" id="saveBtnLogin">Salvar Alterações</button>
+                <button type="submit" class="savebtn" id="saveBtnLogin">Salvar Alterações</button>
             </div>
-          </form>
-        </div>
+        </form>
     </div>
-    <div class="quadros">
-      <h2 class="h2Atu">Gerenciamento de E-mail</h2> 
-        <div class="container">
-          <form id="configEmailForm" method="post" action="atualizacao.php">
+</div>
+
+<div class="quadros">
+    <h2 class="h2Atu">Gerenciamento de E-mail</h2> 
+    <div class="container">
+        <form id="configEmailForm" method="post" action="atualizacao.php">
             <label for="myemail">E-MAIL</label>
             <input type="email" id="myemail" name="myemail" placeholder="Digite seu e-mail">
             
@@ -172,23 +144,23 @@
             <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirme seu e-mail">
 
             <div class="buttonAtu">
-              <button type="submit" class="savebtn" id="saveBtnEmail">Salvar Alterações</button>
+                <button type="submit" class="savebtn" id="saveBtnEmail">Salvar Alterações</button>
             </div>
-          </form> 
-        </div>
+        </form> 
     </div>
+</div>
 
-  <div class="options">
+<div class="options">
     <a href="jogo.html">
-      <img src="../images/voltar.png" alt="voltar">
+        <img src="../images/voltar.png" alt="voltar">
     </a>
-  </div>
-  
-  <footer>
+</div>
+
+<footer>
     <p>
-      Grupo 04 © 2023
+        Grupo 04 © 2023
     </p>
-  </footer>
+</footer>
 
 </body>
 </html>

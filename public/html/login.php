@@ -46,10 +46,12 @@
             $row = $result->fetch_assoc();
             // Obter o ID do usuário
             $userId = $row['id'];
+            $userpsswd = $row['psswd'];
             // Iniciar a sessão
             session_start();
             // Armazena o ID do usuário na sessão
             $_SESSION['userId'] = $userId;
+            $_SESSION['userpsswd'] = $userpsswd;
 
             // Liberado!Pode abrir jogo.
             header("Location: tabuleiro.html");
