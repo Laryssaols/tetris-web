@@ -7,7 +7,6 @@ $database = "tetris";
 $connection = new mysqli($host, $user, $senha, $database) or die("ERRO DE CONEXÃO!!!");
 
 if (isset($_POST['cadastrar'])) {
-    // Usar mysqli_real_escape_string para evitar injeção de SQL
     $user = mysqli_real_escape_string($connection, $_POST['userName']);
     $password = mysqli_real_escape_string($connection, $_POST['password']);
     $name = mysqli_real_escape_string($connection, $_POST['name']);
@@ -15,21 +14,28 @@ if (isset($_POST['cadastrar'])) {
     $email = mysqli_real_escape_string($connection, $_POST['email']);
     $dt_nasc = mysqli_real_escape_string($connection, $_POST['dataNascimento']);
 
-    // Verificar se os campos obrigatórios foram preenchidos
     if (empty($user) || empty($password) || empty($name) || empty($cpf) || empty($email) || empty($dt_nasc)) {
         echo 'Por favor, preencha todos os campos.';
     } else {
-        $query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, data_nascimento) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$dt_nasc')");
-
-        if ($query) {
-            header("Location: login.php");
-            exit();
+        // Verificação de e-mail único
+        $checkEmailQuery = mysqli_query($connection, "SELECT * FROM user WHERE email='$email'");
+        if (mysqli_num_rows($checkEmailQuery) > 0) {
+            echo 'E-mail já cadastrado. Escolha outro e-mail.';
         } else {
-            echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
+            // Inserir no banco de dados se todas as verificações passarem
+            $query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, data_nascimento) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$dt_nasc')");
+
+            if ($query) {
+                header("Location: login.php");
+                exit();
+            } else {
+                echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
+            }
         }
     }
 }
 ?>
+
 
 
 
