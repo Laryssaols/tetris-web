@@ -171,7 +171,7 @@
             <label for="novaSenha">NOVA SENHA</label>
             <input type="password" id="novaSenha" name="novaSenha" placeholder="Digite nova senha">
 
-            <label for="novaSenha2">CONFIRMAR NOVA SENHA</label>
+            <label for="confirmarNovaSenha">CONFIRMAR NOVA SENHA</label>
             <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Confirme nova senha">
 
             <div class="buttonAtu">
@@ -188,7 +188,7 @@
             <label for="myemail">E-MAIL</label>
             <input type="email" id="myemail" name="myemail" placeholder="Digite seu e-mail">
             
-            <label for="mymail2">CONFIRMAR E-MAIL</label>
+            <label for="emailConfirm">CONFIRMAR E-MAIL</label>
             <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirme seu e-mail">
 
             <div class="buttonAtu">
