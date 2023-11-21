@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="../css/folhaGeral.css">
-    <link rel="shortcut icon" href="tetrisIcon.png">
+    <link rel="shortcut icon" href="../images/tetrisIcon.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="login-container">
+        <h1 class="tituloLogin">Login</h1>
         <form method="post" action="login.php">
             <input type="text" placeholder="Usuário" name="usuario" id="usuario">
             <input type="password" placeholder="Senha" name="senha" id="senha">
@@ -21,46 +22,41 @@
     </div>
     
     <?php
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "tetris";
+        // Verifica se o formulário se foi enviado 1 vez
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "tetris";
 
-        $userName = $_POST['usuario']; 
-        $passwordInput = $_POST['senha'];
+            $userName = $_POST['usuario']; 
+            $passwordInput = $_POST['senha'];
 
-        // Criar
-        $conn = new mysqli($servername, $username, $password, $dbname);
+            
+            $conn = new mysqli($servername, $username, $password, $dbname);
 
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+            $sql = "SELECT * FROM `user` WHERE `userName` = '$userName' AND `password` = '$passwordInput'";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $userId = $row['id'];
+                session_start();
+                $_SESSION['userId'] = $userId;
+
+                header("Location: tabuleiro.html");
+                exit();
+            } else {
+                echo "<p class='error-message'>Usuário e senha incorretos</p>";
+            }
+
+            $conn->close();
         }
-
-        // Query 
-        $sql = "SELECT * FROM `user` WHERE `userName` = '$userName' AND `password` = '$passwordInput'";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            // Obter a primeira linha do resultado como uma array associativa
-            $row = $result->fetch_assoc();
-            // Obter o ID do usuário
-            $userId = $row['id'];
-            // Iniciar a sessão
-            session_start();
-            // Armazena o ID do usuário na sessão
-            $_SESSION['userId'] = $userId;
-            // Liberado!Pode abrir jogo.
-            header("Location: tabuleiro.html");
-            exit();
-        } else {
-            // Bloqueado
-            echo "Usuário e senha incorretos";
-        }
-        $conn->close();
     ?>
-
-</body>
 
 <footer class="footerLogin">
     <p>Grupo 04 © 2023</p>

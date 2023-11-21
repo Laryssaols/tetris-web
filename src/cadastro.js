@@ -11,24 +11,30 @@ function limparDados() {
 
 // Validação de cadastro
 
-function validarCadastro() {
-    const cpf = document.getElementById("cpf").value;
-    const dataNasc = document.getElementById("dataNascimento").value;
-    const username = document.getElementById("userName").value;
-    const nomeCompleto = document.getElementById("nomeCompleto").value;
-    const email = document.getElementById("email").value;
-    const confirmarEmail = document.getElementById("confirmarEmail").value;
-    const senha = document.getElementById("senha").value;
-    const confirmarSenha = document.getElementById("confirmarSenha").value;
+   
+    function validarCadastro() {
+      
+        const cpf = document.getElementById("cpf").value;
+        const dataNascimento = document.getElementById("dataNascimento").value;
+        const username = document.getElementById("userName").value;
+        const nomeCompleto = document.getElementById("nomeCompleto").value;
+        const email = document.getElementById("email").value;
+        const confirmarEmail = document.getElementById("confirmarEmail").value;
+        const senha = document.getElementById("senha").value;
+        const confirmarSenha = document.getElementById("confirmarSenha").value;
 
-    if (!cpf || !dataNascimento || !username || !nomeCompleto || !email || !confirmarEmail || !senha || !confirmarSenha) {
-        alert("Por favor, preencha todos os campos.");
-    } else if (email !== confirmarEmail) {
-        alert("Os campos de e-mail e confirmar e-mail não correspondem.");
-    } else if (senha !== confirmarSenha) {
-        alert("Os campos de senha e confirmar senha não correspondem.");
-    } else {
-        alert("Cadastro bem-sucedido!");
-        window.location.href = "login.html";
+        if (!cpf || !dataNascimento || !username || !nomeCompleto || !email || !confirmarEmail || !senha || !confirmarSenha) {
+            alert("Por favor, preencha todos os campos.");
+            return false;
+        } else if (email !== confirmarEmail) {
+            alert("Os campos de e-mail e confirmar e-mail não correspondem.");
+            return false;
+        } else if (senha !== confirmarSenha) {
+            alert("Os campos de senha e confirmar senha não correspondem.");
+            return false;
+        } else {
+            alert("Cadastro bem-sucedido!");
+            //window.location.href = "login.php";
+            return true;
+        }
     }
-}
