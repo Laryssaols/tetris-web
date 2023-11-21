@@ -14,27 +14,20 @@ if (isset($_POST['cadastrar'])) {
     $email = mysqli_real_escape_string($connection, $_POST['email']);
     $dt_nasc = mysqli_real_escape_string($connection, $_POST['dataNascimento']);
 
-    if (empty($user) || empty($password) || empty($name) || empty($cpf) || empty($email) || empty($dt_nasc)) {
-        echo 'Por favor, preencha todos os campos.';
-    } else {
-        // Verificação de e-mail único
-        $checkEmailQuery = mysqli_query($connection, "SELECT * FROM user WHERE email='$email'");
-        if (mysqli_num_rows($checkEmailQuery) > 0) {
-            echo 'E-mail já cadastrado. Escolha outro e-mail.';
-        } else {
-            // Inserir no banco de dados se todas as verificações passarem
-            $query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, data_nascimento) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$dt_nasc')");
+  
+  
+// Inserir no banco de dados sem verificar a condição 'cadastrar'
+$query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, data_nascimento) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$dt_nasc')");
 
-            if ($query) {
-                header("Location: login.php");
-                exit();
-            } else {
-                echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
-            }
-        }
-    }
+if ($query) {
+    header("Location: login.php");
+    exit();
+} else {
+    echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
+}
 }
 ?>
+
 
 
 
@@ -47,7 +40,7 @@ if (isset($_POST['cadastrar'])) {
         Cadastre-se
     </title>
     <link rel="stylesheet" href="../css/folhaGeral.css">
-    <link rel="shortcut icon" href="../images/tetrisIcon.png">
+    <link rel="shortcut icon" href="tetrisIcon.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="../../src/cadastro.js"></script>
 </head>
