@@ -23,49 +23,97 @@
 
   // Atualiza o nome
   if (isset($_POST['newName'])) {
-      $newName = $_POST['newName'];
-      $updateName = "UPDATE `user` SET `name` = '$newName' WHERE `id` = $loggedUser";
-      $conn->query($updateName);
-  }
+        $newName = $_POST['newName'];
+        if(!empty($newName)) {
+            $updateName = "UPDATE `user` SET `name` = ? WHERE `id` = ?";
+            $stmt = $conn->prepare($updateName);
+            $stmt->bind_param("si", $newName, $loggedUser);
+            $stmt->execute();
+
+            if ($stmt && $stmt->affected_rows > 0) {
+                echo '<script>alert("Nome atualizado com sucesso!");</script>';
+            }
+
+            $stmt->close();
+        }
+    }
 
   // Atualiza o número do telefone
   if (isset($_POST['phone'])) {
       $newPhone = $_POST['phone'];
-      $updatePhone = "UPDATE `user` SET `phone` = '$newPhone' WHERE `id` = $loggedUser";
-      $conn->query($updatePhone);
-  }
+      if (!empty($newPhone)) {
+        $updatePhone = "UPDATE `user` SET `phone` = ? WHERE `id` = ?";
+        $stmt = $conn->prepare($updatePhone);
+        $stmt->bind_param("si", $newPhone, $loggedUser);
+        $stmt->execute();
+
+        if ($stmt && $stmt->affected_rows > 0) {
+            echo '<script>alert("Número de telefone atualizado com sucesso!");</script>';
+        }
+
+        $stmt->close();
+      }
+    }
 
   // Atualiza a senha
   if (isset($_POST['senhaAtual']) && isset($_POST['novaSenha']) && isset($_POST['confirmarNovaSenha'])) {
-      $senhaAtual = $_POST['senhaAtual'];
-      $novaSenha = $_POST['novaSenha'];
-      $confirmarNovaSenha = $_POST['confirmarNovaSenha'];
+    $senhaAtual = $_POST['senhaAtual'];
+    $novaSenha = $_POST['novaSenha'];
+    $confirmarNovaSenha = $_POST['confirmarNovaSenha'];
 
-      // Verifica se a senha está correta
-      $loggedUser = authenticate($_SESSION['username'], $senhaAtual);
+    $stmt = $conn->prepare("SELECT `id` FROM `user` WHERE `id` = ? AND `password` = ?");
+    $stmt->bind_param("is", $loggedUser, $senhaAtual);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($userId);
+    $stmt->fetch();
+    $stmt->close();
 
-      if ($loggedUserId !== null && $novaSenha === $confirmarNovaSenha) {
-          $updatePassword = "UPDATE `user` SET `password` = '$novaSenha' WHERE `id` = $loggedUser";
-          $conn->query($updatePassword);
-      } else {
-          echo "Erro: Senha atual incorreta ou as novas senhas não coincidem.";
-      }
-  }
+    if ($userId !== null && $novaSenha === $confirmarNovaSenha) {
+        $stmt = $conn->prepare("UPDATE `user` SET `password` = ? WHERE `id` = ?");
+        $stmt->bind_param("si", $novaSenha, $loggedUser);
+        $stmt->execute();
+
+        if ($stmt && $stmt->affected_rows > 0) {
+            echo '<script>alert("Senha atualizado com sucesso!!");</script>';
+        }
+
+        $stmt->close();
+    } else {
+        echo "Erro: Senha atual incorreta ou as novas senhas não coincidem.";
+    }
+}
 
   // Atualiza o email
   if (isset($_POST['myemail']) && isset($_POST['emailConfirm'])) {
-      $newEmail = $_POST['myemail'];
-      $confirmEmail = $_POST['emailConfirm'];
+    $newEmail = $_POST['myemail'];
+    $confirmEmail = $_POST['emailConfirm'];
 
-      if ($newEmail === $confirmEmail) {
-          $updateEmail = "UPDATE `user` SET `email` = '$newEmail' WHERE `id` = $loggedUser";
-          $conn->query($updateEmail);
-      } else {
-          echo "Erro: Os endereços de e-mail não coincidem.";
-      }
-  }
+    if ($newEmail === $confirmEmail) {
+        $updateEmailQuery = "UPDATE `user` SET `email` = ? WHERE `id` = ?";
+        $stmt = $conn->prepare($updateEmailQuery);
 
-  $conn->close();
+        if ($stmt) {
+            $stmt->bind_param("si", $newEmail, $loggedUser);
+            $stmt->execute();
+
+            // Verifica se a atualização foi bem-sucedida
+            if ($stmt->affected_rows > 0) {
+                echo '<script>alert("E-mail atualizado com sucesso!");</script>';
+            } else {
+                echo "Erro: Não foi possível atualizar o e-mail.";
+            }
+
+            $stmt->close();
+
+        } else {
+            echo "Erro na preparação da consulta.";
+        }
+    } else {
+        echo "Erro: Os endereços de e-mail não coincidem.";
+    }
+}
+
 
 ?>
 
