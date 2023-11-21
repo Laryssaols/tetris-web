@@ -236,7 +236,13 @@ footer p {
 }
 
 .celulaEspecial {
-    border: 2px solid #e6dede;
+    font-family: 'Tetris', sans-serif;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;   
+    letter-spacing: 1px;
+    font-size: large;
+    padding-bottom: 10px;
 }
 /*Linhas ímpares*/
 .fundoTabela tr:nth-child(odd) {
