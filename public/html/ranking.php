@@ -46,7 +46,7 @@ $posicaoJogadorAtual = $rankingData['posicaoJogadorAtual'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking</title>
-    <link rel="shortcut icon" href="tetrisIcon.png">
+    <link rel="shortcut icon" href="../images/tetrisIcon.png">
     <link rel="stylesheet" href="../css/folhaGeral.css">
 </head>
 
@@ -124,7 +124,7 @@ $posicaoJogadorAtual = $rankingData['posicaoJogadorAtual'];
         var rankingData = <?php echo json_encode($topPlayers); ?>;
     </script>
 
-    <script src="ranking.js"></script>
+    <script src="../../src/ranking.js"></script>
 </body>
 
 </html>

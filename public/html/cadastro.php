@@ -47,7 +47,7 @@ if (isset($_POST['cadastrar'])) {
         Cadastre-se
     </title>
     <link rel="stylesheet" href="../css/folhaGeral.css">
-    <link rel="shortcut icon" href="tetrisIcon.png">
+    <link rel="shortcut icon" href="../images/tetrisIcon.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="../../src/cadastro.js"></script>
 </head>
