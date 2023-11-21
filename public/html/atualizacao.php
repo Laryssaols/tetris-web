@@ -166,13 +166,13 @@
 
             <h3 class="h3Atu">Alterar Senha</h3>
             <label for="senhaAtual">SENHA ATUAL</label>
-            <input type="password" id="senhaAtual" name="senhaAtual" placeholder="Digite sua senha atual">
+            <input type="password" id="senhaAtual" name="senhaAtual" placeholder="Digite sua senha atual" autocomplete="off">
 
             <label for="novaSenha">NOVA SENHA</label>
-            <input type="password" id="novaSenha" name="novaSenha" placeholder="Digite nova senha">
+            <input type="password" id="novaSenha" name="novaSenha" placeholder="Digite nova senha" autocomplete="off">
 
             <label for="confirmarNovaSenha">CONFIRMAR NOVA SENHA</label>
-            <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Confirme nova senha">
+            <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Confirme nova senha" autocomplete="off">
 
             <div class="buttonAtu">
                 <button type="submit" class="savebtn" id="saveBtnLogin">Salvar Alterações</button>
