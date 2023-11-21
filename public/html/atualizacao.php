@@ -90,8 +90,8 @@
     $confirmEmail = $_POST['emailConfirm'];
 
     if ($newEmail === $confirmEmail) {
-        $updateEmailQuery = "UPDATE `user` SET `email` = ? WHERE `id` = ?";
-        $stmt = $conn->prepare($updateEmailQuery);
+        $updateEmail = "UPDATE `user` SET `email` = ? WHERE `id` = ?";
+        $stmt = $conn->prepare($updateEmail);
 
         if ($stmt) {
             $stmt->bind_param("si", $newEmail, $loggedUser);
