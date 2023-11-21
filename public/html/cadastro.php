@@ -61,7 +61,7 @@ if (isset($_POST['cadastrar'])) {
             <input type="password" id="senha" name="password" placeholder="Digite sua senha">
             <input type="password" id="confirmarSenha" placeholder="Confirme sua senha">
             <input type="text" id="nomeCompleto" name="name" placeholder="Digite seu nome completo">
-            <input type="number" id="cpf"  name="cpf" placeholder="Digite seu CPF">
+            <input type="number" id="cpf"  name="cpf" placeholder="Digite seu CPF" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
             <input type="date" id="dataNascimento" name="dataNascimento">
             <input type="text" id="email" name="email" placeholder="Digite seu e-mail">
             <input type="text" id="confirmarEmail"placeholder="Confirme seu e-mail">
