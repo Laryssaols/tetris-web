@@ -1,38 +1,42 @@
 <?php
-    session_start();
+session_start();
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "tetris";
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "tetris";
 
-    try {
-        $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
-    } catch (PDOException $e) {
-        die("Conexão falhou: " . $e->getMessage());
+try {
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
+} catch (PDOException $e) {
+    die("Conexão falhou: " . $e->getMessage());
+}
+
+$usernameJogadorAtual = isset($_SESSION['username']) ? $_SESSION['username'] : null;
+
+function getRankingData($pdo, $usernameJogadorAtual) {
+    $stmt = $pdo->prepare("SELECT  `result_game`.`score`, `result_game`.`level`, `user`.`userName` FROM `result_game` 
+                        INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
+                        ORDER BY  `result_game`.`score` DESC");
+    $stmt->execute();
+    $allPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $posicaoJogadorAtual = array_search($usernameJogadorAtual, array_column($allPlayers, 'userName'));
+
+    $topPlayers = array_slice($allPlayers, 0, 10);
+
+    while (count($topPlayers) < 10) {
+        $topPlayers[] = array('score' => 'NULL', 'level' => 'NULL', 'userName' => 'NULL');
     }
 
-    $usernameJogadorAtual = isset($_SESSION['username']) ? $_SESSION['username'] : null;
+    return ['topPlayers' => $topPlayers, 'posicaoJogadorAtual' => $posicaoJogadorAtual];
+}  
 
-    // Função para obter os dados do ranking 
-    function getRankingData($pdo, $usernameJogadorAtual) {
-        // Pegando os melhores 10 jogadores pelo score e os colocando em $topPlayers
-        $stmt = $pdo->prepare("SELECT  `result_game`.`score`, `result_game`.`level`, `user`.`userName` FROM `result_game` 
-                            INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                            ORDER BY  `result_game`.`score` DESC LIMIT 10");
-        $stmt->execute();
-        $topPlayers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$rankingData = getRankingData($pdo, isset($_SESSION['username']) ? $_SESSION['username'] : null);
 
-        while (count($topPlayers) < 10) {
-            $topPlayers[] = array('score' => 'NULL', 'level' => 'NULL', 'userName' => 'NULL');
-        }
-
-        return $topPlayers;
-    }  
-    // Obtem os dados do ranking
-    $topPlayers = getRankingData($pdo, isset($_SESSION['username']) ? $_SESSION['username'] : null);
-
+$topPlayers = $rankingData['topPlayers'];
+$posicaoJogadorAtual = $rankingData['posicaoJogadorAtual'];
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +46,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking</title>
-    <link rel="shortcut icon" href="tetrisIcon.png">
+    <link rel="shortcut icon" href="../images/tetrisIcon.png">
     <link rel="stylesheet" href="../css/folhaGeral.css">
 </head>
 
@@ -57,6 +61,10 @@
     </header>
 
     <main>
+        <?php
+            echo "<p class='celulaEspecial'>Sua posição é: " . ($posicaoJogadorAtual + 1) . "</p>";
+        ?>
+
         <table class="fundoTabela">
             <tr>
                 <th>
@@ -82,26 +90,10 @@
             </tr>
             <?php
                 foreach ($topPlayers as $position => $player) {
-
                     echo "<tr>";
 
-                    $dadosJogadorAtual = "SELECT `user`.`userName` FROM `result_game` 
-                    INNER JOIN `user` ON `result_game`.`iduser` = `user`.`id` 
-                    WHERE `user`.`userName` = :username";
-                    $stmtdadosJogadorAtual = $pdo->prepare($dadosJogadorAtual);
-                    $stmtdadosJogadorAtual->bindParam(':username', $usernameJogadorAtual);
-                    $stmtdadosJogadorAtual->execute();
-                    $JogadorAtualResult = $stmtdadosJogadorAtual->fetch(PDO::FETCH_ASSOC);
-                    
-                    if ($JogadorAtualResult !== false && is_array($JogadorAtualResult)) {
-                        $celulaMarcada = ($player['userName'] == $usernameJogadorAtual) ? 'celulaEspecial' : '';
-                    } else {
-                        $celulaMarcada = ''; 
-                    }
-                
-                    echo "<td class= $celulaMarcada ><p class='nomesEconteudoRanking'>" . ($position + 1) . "</p></td>";
+                    echo "<td><p class='nomesEconteudoRanking'>" . ($position + 1) . "</p></td>";
 
-                    
                     if ($player['userName'] != 'NULL') {
                         echo "<td><p class='nomesEconteudoRanking'>" . $player['userName'] . "</p></td>";
                         echo "<td><p class='nomesEconteudoRanking'>" . $player['score'] . "</p></td>";
@@ -111,7 +103,7 @@
                         echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
                         echo "<td><p class='nomesEconteudoRanking'>VOID</p></td>";
                     }
-                    
+
                     echo "</tr>";
                 }
             ?>
@@ -132,7 +124,7 @@
         var rankingData = <?php echo json_encode($topPlayers); ?>;
     </script>
 
-    <script src="ranking.js"></script>
+    <script src="../../src/ranking.js"></script>
 </body>
 
 </html>
