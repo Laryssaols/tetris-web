@@ -120,11 +120,7 @@ $posicaoJogadorAtual = $rankingData['posicaoJogadorAtual'];
         </p>
     </footer>
 
-    <script>
-        var rankingData = <?php echo json_encode($topPlayers); ?>;
-    </script>
 
-    <script src="../../src/ranking.js"></script>
 </body>
 
 </html>
