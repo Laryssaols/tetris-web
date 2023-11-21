@@ -13,6 +13,7 @@ function limparDados() {
 
    
     function validarCadastro() {
+      
         const cpf = document.getElementById("cpf").value;
         const dataNascimento = document.getElementById("dataNascimento").value;
         const username = document.getElementById("userName").value;
@@ -32,7 +33,7 @@ function limparDados() {
             alert("Os campos de senha e confirmar senha não correspondem.");
             return false;
         } else {
-            //alert("Cadastro bem-sucedido!");
+            alert("Cadastro bem-sucedido!");
             //window.location.href = "login.php";
             return true;
         }

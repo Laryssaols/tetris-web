@@ -47,7 +47,7 @@ if (isset($_POST['cadastrar'])) {
 <main>
 
     <body>
-    <form method="post" action="cadastro.php">
+    <form method="post" action="cadastro.php" onsubmit="return validarCadastro()">
         <div class="cadastro-container">
             <h1 class="tituloCadastro">Cadastre-se</h1>
             <input type="text" id="userName" name="userName" placeholder="Escolha o Username">
@@ -60,8 +60,8 @@ if (isset($_POST['cadastrar'])) {
             <input type="text" id="email" name="email" placeholder="Digite seu e-mail">
             <input type="text" id="confirmarEmail"placeholder="Confirme seu e-mail">
            
-            <button onClick="validarCadastro()" name="cadastrar">Cadastrar</button>
-            <button onClick="limparDados()">Limpar dados</button>
+            <input type="submit" name="cadastrar" value="Cadastrar">
+             <button onClick="limparDados()">Limpar dados</button>
             
         </div>
 </form>
