@@ -12,21 +12,21 @@ if (isset($_POST['cadastrar'])) {
     $name = mysqli_real_escape_string($connection, $_POST['name']);
     $cpf = mysqli_real_escape_string($connection, $_POST['cpf']);
     $email = mysqli_real_escape_string($connection, $_POST['email']);
+    $tel = mysqli_real_escape_string($connection, $_POST['telef']);
     $dt_nasc = mysqli_real_escape_string($connection, $_POST['dataNascimento']);
 
-  
-  
-// Inserir no banco de dados sem verificar a condição 'cadastrar'
-$query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, data_nascimento) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$dt_nasc')");
+    // Corrija a declaração SQL, adicionando uma vírgula entre $tel e $dt_nasc
+    $query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, phone, data_nasc) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$tel', '$dt_nasc')");
 
-if ($query) {
-    header("Location: login.php");
-    exit();
-} else {
-    echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
-}
+    if ($query) {
+        header("Location: login.php");
+        exit();
+    } else {
+        echo 'Erro ao inserir dados no banco de dados: ' . mysqli_error($connection);
+    }
 }
 ?>
+
 
 
 
@@ -47,13 +47,14 @@ if ($query) {
 <main>
 
     <body>
-<form method = "post" action="cadastro.php">
+    <form method="post" action="cadastro.php">
         <div class="cadastro-container">
             <h1 class="tituloCadastro">Cadastre-se</h1>
             <input type="text" id="userName" name="userName" placeholder="Escolha o Username">
             <input type="password" id="senha" name="password" placeholder="Digite sua senha">
             <input type="password" id="confirmarSenha" placeholder="Confirme sua senha">
             <input type="text" id="nomeCompleto" name="name" placeholder="Digite seu nome completo">
+            <input type="number" id="telefone" name="telef" placeholder="Digite seu telefone" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
             <input type="number" id="cpf"  name="cpf" placeholder="Digite seu CPF" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
             <input type="date" id="dataNascimento" name="dataNascimento">
             <input type="text" id="email" name="email" placeholder="Digite seu e-mail">
