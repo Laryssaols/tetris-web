@@ -15,7 +15,6 @@ if (isset($_POST['cadastrar'])) {
     $tel = mysqli_real_escape_string($connection, $_POST['telef']);
     $dt_nasc = mysqli_real_escape_string($connection, $_POST['dataNascimento']);
 
-    // Corrija a declaração SQL, adicionando uma vírgula entre $tel e $dt_nasc
     $query = mysqli_query($connection, "INSERT INTO user(userName, password, name, cpf, email, phone, data_nasc) VALUES ('$user', '$password', '$name', '$cpf', '$email', '$tel', '$dt_nasc')");
 
     if ($query) {
@@ -60,7 +59,7 @@ if (isset($_POST['cadastrar'])) {
             <input type="text" id="email" name="email" placeholder="Digite seu e-mail">
             <input type="text" id="confirmarEmail"placeholder="Confirme seu e-mail">
            
-            <input type="submit" name="cadastrar" value="Cadastrar">
+            <input type="submit" id="btn_cad" name="cadastrar" value="Cadastrar">
              <button onClick="limparDados()">Limpar dados</button>
             
         </div>

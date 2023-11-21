@@ -353,6 +353,22 @@ img{
     margin-left: 40px;
 }
 
+#btn_cad{
+    width: 85%;
+    margin-left: 3%;
+    padding: 10px;
+    margin-top: 5%;
+    background-color: #00072D;
+    color: white;
+    border: none;
+    font-family: 'Tetris', sans-serif; 
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 40px;
+}
+
 .cadastro-container a {
     margin-top: 10%;
     padding-top: 20px;
